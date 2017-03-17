@@ -30,7 +30,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int best_index = liuxin.customer_num;
     int block_size = (int)(sqrt(liuxin.customer_num) + 0.1);
     double double_clock;
-
     for (int i = 1; i <= liuxin.customer_num; i += block_size) {
         vector<int> server1 = liuxin.kmeans(i), server2;
         jintao.recover();
@@ -66,10 +65,19 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             }
         }
     }
-
     for (int i = max(best_index - block_size, 1); i <= min(best_index + block_size, liuxin.customer_num); i++) {
         vector<int> server1 = liuxin.kmeans(i), server2;
+        //jintao.recover();
+        //jintao.add_server(server1);
         hgapso.addone(server1);
+        /*
+        long long best_now = jintao.costflow() + i * (long long)liuxin.server_cost;
+        if (best_now < best_cost) {
+            best_cost = best_now;
+            best_server = server1;
+            best_index = i;
+        }
+        */
         for (int j = 1; j < kmean_times ; ++j) {
             server2 = liuxin.kmeans(i);
             bool same = true;
@@ -80,9 +88,26 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
                 }
             }
             if (same)
-                continue;         
+                continue;
+            /*
+            jintao.recover();
+            jintao.add_server(server2);
+            */
             hgapso.addone(server2);
             server1 = server2;
+            /*
+            long long cost = jintao.costflow() + i * (long long)liuxin.server_cost;
+            if (cost < best_now) {
+                server1 = server2;
+                hgapso.addone(server1);
+                best_now = cost;
+                if (best_now < best_cost) {
+                    best_cost = best_now;
+                    best_server = server1;
+                    best_index = i;
+                }
+            }
+            */
         }
     }
     
@@ -117,7 +142,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 }
 
 Particle::Particle(int length): v(length, 0.0), v_best(length, 0.0), vp(length, 0.0), cost_best(infll), cost(infll) {}
-
+/*
 bool operator== (const Particle & p1, const Particle & p2) {
     return p1.cost_best == p2.cost_best && p1.cost == p2.cost;
 }
@@ -137,33 +162,29 @@ bool operator<= (const Particle & p1, const Particle & p2) {
 bool operator>= (const Particle & p1, const Particle & p2) {
     return p1 > p2 || p1 == p2;
 }
+*/
 
-template <class T>
-void Qsort(vector<T> & v, int low, int high) {
-    if (low >= high)
-        return;
-    int first = low;
-    int last = high;
-    T pivot = v[first];
-    while (first < last) {
-        while (first < last && v[last] >= pivot)
-            --last;
-        v[first] = v[last];
-        while (first < last && v[first] <= pivot)
-            ++first;
-        v[last] = v[first];
-    }
-    v[first] = pivot;
-    Qsort(v, low, first - 1);
-    Qsort(v, first + 1, high);
+
+bool operator== (const Particle & p1, const Particle & p2) {
+    return p1.cost_best == p2.cost_best && p1.cost == p2.cost;
 }
 
-template <class T>
-void Swap(T & a, T & b) {
-    T temp = a;
-    a = b;
-    b = temp;
+bool operator< (const Particle & p1, const Particle & p2) {
+    return p1.cost == p2.cost ? p1.cost_best < p2.cost_best : p1.cost < p2.cost;
 }
+
+bool operator> (const Particle & p1, const Particle & p2) {
+    return p1.cost == p2.cost ? p1.cost_best > p2.cost_best : p1.cost > p2.cost;
+}
+
+bool operator<= (const Particle & p1, const Particle & p2) {
+    return p1 < p2 || p1 == p2;
+}
+
+bool operator>= (const Particle & p1, const Particle & p2) {
+    return p1 > p2 || p1 == p2;
+}
+
 
 template <class T>
 void knuth_shuffle(vector<T> & v) {
@@ -452,6 +473,7 @@ vector<int> HGAPSO::get_best() {
 }
 
 void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
+    
     int r1 = rand() % l, r2 = rand() % l;
     if (r1 > r2) 
         swap(r1, r2);
@@ -459,17 +481,22 @@ void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
         swap(s1.v[r1], s2.v[r1]);
         ++r1;
     }
+    /*
+    int r1 = rand() % l, r2;
+    while (r1--) {
+        r2 = rand() % l;
+        swap(s1.v[r2], s2.v[r2]);
+    }
+    */
 }
 
 void HGAPSO::GA_mutation(Particle & s) {
-    int r1 = rand() % l, r2 = rand() % l;
-    if (r1 > r2) 
-        swap(r1, r2);
-    while (r1 < r2) {
-        s.v[r1] += (double)rand() / RAND_MAX - 0.5;
-        s.v[r1] = max(0.0, s.v[r1]);
-        s.v[r1] = min(s.v[r1], 1.0);
-        ++r1;
+    int r1 = rand() % l, r2;
+    while (r1--) {
+        r2 = rand() % l;
+        s.v[r2] += (double)rand() / RAND_MAX - 0.5;
+        s.v[r2] = max(0.0, s.v[r1]);
+        s.v[r2] = min(s.v[r1], 1.0);
     }
 }
 
@@ -500,6 +527,11 @@ void HGAPSO::run() {
         }
     }
     sort(p.begin(), p.end());
+    if (p.size() > MAX_P_SIZE) {
+        p.resize(MAX_P_SIZE);
+        k = MAX_P_SIZE;
+        j = MAX_P_SIZE / 2;
+    }
     while (i < j) {
         PSO_update(p[i]);
         ++i;

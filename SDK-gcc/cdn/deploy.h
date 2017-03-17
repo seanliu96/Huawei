@@ -7,10 +7,11 @@
 using namespace std;
 
 const int MAX_V = 1010;
+const int MAX_P_SIZE = 50;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
 const int kmean_times = 10;
-const double last_second = 80, pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
+const double last_second = 90 / 2 - 1, pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
 
 
 struct EdgeInfo {
@@ -65,7 +66,7 @@ public:
 private:
     int aug(int u, int m);
     bool modlabel();
-    Edge epool[MAX_EDGE_NUM * 4 + 10000], *e[MAX_V];
+    Edge epool[MAX_EDGE_NUM * 4 + 3000], *e[MAX_V];
     int psz, s, t;
     int flow, dist, d[MAX_V];
     long long cost;
@@ -93,13 +94,7 @@ private:
 };
 
 template <class T>
-void Swap(T & a, T & b);
-
-template <class T>
 void knuth_shuffle(vector<T> & v);
-
-template <class T>
-void Qsort(vector<T> & v, int low, int high);
 
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename);
 
