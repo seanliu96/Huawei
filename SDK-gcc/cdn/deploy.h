@@ -11,7 +11,7 @@ const int MAX_P_SIZE = 50;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
 const int kmean_times = 10;
-const double last_second = 90 / 2 - 1, pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
+const double last_second = (90 >> 1) - 1, pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9, alpha = 1.01;
 
 
 struct EdgeInfo {
@@ -80,6 +80,7 @@ public:
     vector<int> get_best();
     void addone(vector<int> & v);
     void run();
+    void first_run();
 private:
     Particle encode(vector<int> & vini);
     vector<int> decode(vector<double> & v);

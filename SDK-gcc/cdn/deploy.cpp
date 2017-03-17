@@ -65,11 +65,12 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             }
         }
     }
+
     for (int i = max(best_index - block_size, 1); i <= min(best_index + block_size, liuxin.customer_num); i++) {
         vector<int> server1 = liuxin.kmeans(i), server2;
+        hgapso.addone(server1);
         //jintao.recover();
         //jintao.add_server(server1);
-        hgapso.addone(server1);
         /*
         long long best_now = jintao.costflow() + i * (long long)liuxin.server_cost;
         if (best_now < best_cost) {
@@ -89,12 +90,12 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             }
             if (same)
                 continue;
+            hgapso.addone(server2);
+            server1 = server2;
             /*
             jintao.recover();
             jintao.add_server(server2);
             */
-            hgapso.addone(server2);
-            server1 = server2;
             /*
             long long cost = jintao.costflow() + i * (long long)liuxin.server_cost;
             if (cost < best_now) {
@@ -110,14 +111,12 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             */
         }
     }
-    
+    hgapso.first_run();
     do {
         hgapso.run();
         double_clock = (double)clock() / CLOCKS_PER_SEC;
     } while (double_clock < last_second);
-
     best_server = hgapso.get_best();
-    
     jintao.recover();
     jintao.add_server(best_server);
     jintao.costflow();
@@ -257,9 +256,7 @@ vector<int> LiuXin::kmeans(int k) {
     for (int i = 0; i < k; ++i) {
         clusters[i] = customer_nodes[i].v;
     }
-
     bool update = true;
-
     while (update) {
         update = false;
         for (int i = 0; i < customer_num; ++i) {
@@ -442,6 +439,7 @@ HGAPSO::HGAPSO(JinTao & jt, double pm, double pc, double c1, double c2, double w
     l = jintao->liuxin->node_num;
     gbest = Particle(l);
 }
+
 Particle HGAPSO::encode(vector<int> & v) {
     Particle res = Particle(l);
     for (unsigned int i = 0; i < v.size(); ++i) {
@@ -510,13 +508,13 @@ void HGAPSO::PSO_update(Particle & s) {
 }
 
 void HGAPSO::run() {
-    int r1, r2, i = 0, k = p.size(), j = k / 2;
+    int r1, r2, i = 0, j = p.size(), k = j >> 1;
     double r;
-    for (int i = 0; i < k; ++i) {
+    for (int i = 0; i < j; ++i) {
         jintao->recover();
-        vector<int> Q = decode(p[i].v);
-        jintao->add_server(Q);
-        p[i].cost = (long long)jintao->costflow() + Q.size() * (long long)jintao->liuxin->server_cost;
+        vector<int> v = decode(p[i].v);
+        jintao->add_server(v);
+        p[i].cost = (long long)jintao->costflow() + v.size() * (long long)jintao->liuxin->server_cost;
         if (p[i].cost < p[i].cost_best) {
             p[i].v_best = p[i].v;
             p[i].cost_best = p[i].cost;
@@ -527,30 +525,37 @@ void HGAPSO::run() {
         }
     }
     sort(p.begin(), p.end());
-    if (p.size() > MAX_P_SIZE) {
-        p.resize(MAX_P_SIZE);
-        k = MAX_P_SIZE;
-        j = MAX_P_SIZE / 2;
-    }
-    while (i < j) {
+    for (i = 0; i < j; ++i) {
         PSO_update(p[i]);
-        ++i;
     }
-    while (i < k) {
-        r1 = rand() % j;
-        r2 = rand() % j;
-        p[i] = p[r1] < p[r2] ? p[r1] : p[r2]; 
-        ++i;
-    }
-    i = j;
-    while (i < k) {
+    for (; i < k; ++i) {
+        r1 = rand() % k;
+        r2 = rand() % k;
+        p[i] = p[r1] < p[r2] ? p[r1] : p[r2];
         r = (double)rand() / RAND_MAX;
-        if (r < GA_pc && i + 1 < k)
-            GA_cross(p[i], p[i+1]);
+        if (r < GA_pc)
+            GA_cross(p[i - 1], p[i]);
         r = (double)rand() / RAND_MAX;
         if (r < GA_pm)
             GA_mutation(p[i]);
-        ++i;
     }
-    
+    GA_pm *= alpha;
+    GA_pc *= alpha;
+    PSO_c1 *= alpha;
+    PSO_c2 *= alpha;
+    PSO_w *= alpha;
+}
+
+void HGAPSO::first_run() {
+    run();
+    if (p.size() > MAX_P_SIZE) {
+        p.resize(MAX_P_SIZE);
+    } else {
+        int best_size = get_best().size();
+        vector<int> v;
+        for (unsigned int  i = p.size(); i < MAX_P_SIZE; ++i) {
+            v = jintao->liuxin->kmeans(best_size);
+            addone(v);
+        }
+    }
 }
