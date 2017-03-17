@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <iostream>
 #include <cstdlib>
-//#include <algorithm>
+#include <algorithm>
 #include <random>
 #include <cmath>
 #include <cstring>
@@ -18,8 +18,6 @@ using namespace std;
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
     char * topo_file;
-    int kmean_times = 10;
-    double last_second = 10, pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
     LiuXin liuxin;
     liuxin.readtopo(topo, line_num);
     liuxin.spfa();
@@ -62,7 +60,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
                 best_now = cost;
                 if (best_now < best_cost) {
                     best_cost = best_now;
-                    best_server = server2;
+                    best_server = server1;
                     best_index = i;
                 }
             }
@@ -71,10 +69,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 
     for (int i = max(best_index - block_size, 1); i <= min(best_index + block_size, liuxin.customer_num); i++) {
         vector<int> server1 = liuxin.kmeans(i), server2;
-        jintao.recover();
-        jintao.add_server(server1);
         hgapso.addone(server1);
-        long long best_now = jintao.costflow() + i * (long long)liuxin.server_cost;
         for (int j = 1; j < kmean_times ; ++j) {
             server2 = liuxin.kmeans(i);
             bool same = true;
@@ -85,17 +80,10 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
                 }
             }
             if (same)
-                continue;
-            jintao.recover();
-            jintao.add_server(server2);            
+                continue;         
             hgapso.addone(server2);
-            long long cost = jintao.costflow() + i * (long long)liuxin.server_cost;
-            if (cost < best_now) {
-                best_now = cost;
-                server1 = server2;
-            }
+            server1 = server2;
         }
-        hgapso.addone(server1);
     }
     
     do {
@@ -182,7 +170,7 @@ void knuth_shuffle(vector<T> & v) {
     int i = v.size() - 1, j = 0;
     while (i >= 0) {
         j = rand() % (i + 1);
-        Swap(v[i], v[j]);
+        swap(v[i], v[j]);
         --i;
     }
 }
@@ -283,7 +271,7 @@ vector<int> LiuXin::kmeans(int k) {
             clusters[j] = min_index;
         }
     }
-    Qsort(clusters, 0, clusters.size() - 1);
+    sort(clusters.begin(), clusters.end());
     return clusters;
 }
 
@@ -466,9 +454,9 @@ vector<int> HGAPSO::get_best() {
 void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
     int r1 = rand() % l, r2 = rand() % l;
     if (r1 > r2) 
-        Swap(r1, r2);
+        swap(r1, r2);
     while (r1 < r2) {
-        Swap(s1.v[r1], s2.v[r1]);
+        swap(s1.v[r1], s2.v[r1]);
         ++r1;
     }
 }
@@ -476,7 +464,7 @@ void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
 void HGAPSO::GA_mutation(Particle & s) {
     int r1 = rand() % l, r2 = rand() % l;
     if (r1 > r2) 
-        Swap(r1, r2);
+        swap(r1, r2);
     while (r1 < r2) {
         s.v[r1] += (double)rand() / RAND_MAX - 0.5;
         s.v[r1] = max(0.0, s.v[r1]);
@@ -511,7 +499,7 @@ void HGAPSO::run() {
             }
         }
     }
-    Qsort(p, 0 , p.size() - 1);
+    sort(p.begin(), p.end());
     while (i < j) {
         PSO_update(p[i]);
         ++i;
