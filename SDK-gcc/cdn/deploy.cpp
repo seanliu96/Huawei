@@ -539,11 +539,6 @@ void HGAPSO::run() {
         if (r < GA_pm)
             GA_mutation(p[i]);
     }
-    GA_pm *= alpha;
-    GA_pc *= alpha;
-    PSO_c1 *= alpha;
-    PSO_c2 *= alpha;
-    PSO_w *= alpha;
 }
 
 void HGAPSO::first_run() {
