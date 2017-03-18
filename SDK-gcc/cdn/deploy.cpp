@@ -29,6 +29,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     vector<int> flow;
     int best_index = liuxin.customer_num;
     int block_size = (int)(sqrt(liuxin.customer_num) + 0.1);
+    
     for (int i = 1; i <= liuxin.customer_num; i += block_size) {
         vector<int> server1 = liuxin.kmeans(i), server2;
         jintao.recover();
@@ -64,7 +65,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             }
         }
     }
-
+    block_size >>= 1;
     for (int i = max(best_index - block_size, 1); i <= min(best_index + block_size, liuxin.customer_num); i++) {
         vector<int> server1 = liuxin.kmeans(i), server2;
         hgapso.addone(server1);
@@ -110,7 +111,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             */
         }
     }
-    int hgapso_times = MAX_P_SIZE << 2;
+    int hgapso_times = hgapso.first_run() << 3;
     while (hgapso.run() < hgapso_times && (double)clock() / CLOCKS_PER_SEC < last_second);
     best_server = hgapso.get_best();
     jintao.recover();
@@ -566,23 +567,21 @@ int HGAPSO::run() {
     }
     */
     ++unchanged_times;
+    cout << unchanged_times << endl;
     return unchanged_times;
 }
 
 int HGAPSO::first_run() {
     run();
     unchanged_times = 0;
-    int res = p.size();
-    if (res > MAX_P_SIZE) {
-        p.resize(MAX_P_SIZE);
-    } else {
-        int best_size = get_best().size();
-        vector<int> v;
-        for (unsigned int  i = res; i < MAX_P_SIZE; ++i) {
-            v = jintao->liuxin->kmeans(best_size);
-            addone(v);
-        }
-        res = MAX_P_SIZE;
+    int best_size = get_best().size();
+    //int new_size = best_size << 2;
+    int new_size = MAX_P_SIZE;
+    vector<int> v;
+    for (unsigned int  i = p.size(); i < new_size; ++i) {
+        v = jintao->liuxin->kmeans(best_size);
+        addone(v);
     }
-    return res;
+    p.resize(new_size);
+    return new_size;
 }
