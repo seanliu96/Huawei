@@ -111,7 +111,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             */
         }
     }
-    int hgapso_times = hgapso.first_run() * kmean_times;
+    int hgapso_times = hgapso.first_run() * kmean_times / 2;
     do {
         if(hgapso.run() > hgapso_times)
             break;
