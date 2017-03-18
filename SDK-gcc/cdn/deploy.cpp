@@ -29,7 +29,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     vector<int> flow;
     int best_index = liuxin.customer_num;
     int block_size = (int)(sqrt(liuxin.customer_num) + 0.1);
-    double double_clock;
     for (int i = 1; i <= liuxin.customer_num; i += block_size) {
         vector<int> server1 = liuxin.kmeans(i), server2;
         jintao.recover();
@@ -55,7 +54,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             jintao.add_server(server2);
             long long cost = jintao.costflow() + i * (long long)liuxin.server_cost;
             if (cost < best_now) {
-                server1 = server2;
+                server1.swap(server2);
                 best_now = cost;
                 if (best_now < best_cost) {
                     best_cost = best_now;
@@ -91,7 +90,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             if (same)
                 continue;
             hgapso.addone(server2);
-            server1 = server2;
+            server1.swap(server2);
             /*
             jintao.recover();
             jintao.add_server(server2);
@@ -111,12 +110,8 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             */
         }
     }
-    int hgapso_times = hgapso.first_run() * kmean_times / 2;
-    do {
-        if(hgapso.run() > hgapso_times)
-            break;
-        double_clock = (double)clock() / CLOCKS_PER_SEC;
-    } while (double_clock < last_second);
+    int hgapso_times = MAX_P_SIZE << 2;
+    while (hgapso.run() < hgapso_times && (double)clock() / CLOCKS_PER_SEC < last_second);
     best_server = hgapso.get_best();
     jintao.recover();
     jintao.add_server(best_server);
@@ -474,15 +469,15 @@ vector<int> HGAPSO::get_best() {
 }
 
 void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
-    
+    /*
     for (int i = 0; i < l; i++) {
         double r = (double)rand() / RAND_MAX;
         if (r < pc) {
             swap(s1.v[i], s2.v[i]);
         }   
     }
-
-    /*
+    */
+    
     double r = (double)rand() / RAND_MAX;
     if (r > GA_pc)
         return;
@@ -493,7 +488,7 @@ void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
         swap(s1.v[r1], s2.v[r1]);
         ++r1;
     }
-    */
+    
     /*
     int r1 = rand() % l, r2;
     while (r1--) {
@@ -504,7 +499,7 @@ void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
 }
 
 void HGAPSO::GA_mutation(Particle & s) {
-    /*
+    
     for (int i = 0; i < l; i++) {
         double r = (double)rand() / RAND_MAX;
         if (r < GA_pm) {
@@ -513,16 +508,17 @@ void HGAPSO::GA_mutation(Particle & s) {
             s.v[i] = min(s.v[i], 1.0);
         }   
     }
-    */
+    /*
     if ((double)rand() / RAND_MAX > GA_pm)
         return;
-    int r1 = rand() % l, r2;
+    int r1 = rand() % (gbest.v_best.size()), r2;
     while (r1--) {
         r2 = rand() % l;
         s.v[r2] += (double)rand() / RAND_MAX * 2 - 1;
-        s.v[r2] = max(0.0, s.v[r1]);
-        s.v[r2] = min(s.v[r1], 1.0);
+        s.v[r2] = max(0.0, s.v[r2]);
+        s.v[r2] = min(s.v[r2], 1.0);
     }
+    */
 }
 
 void HGAPSO::PSO_update(Particle & s) {
