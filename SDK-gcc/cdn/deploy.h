@@ -7,11 +7,11 @@
 using namespace std;
 
 const int MAX_V = 1010;
-const int MAX_P_SIZE = 50;
+const int MAX_P_SIZE = 30;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
 const int kmean_times = 10;
-const double last_second = (90 >> 1) - 1, pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
+const double last_second = (90 >> 1) - 1, pm = 0.1, pc = 0.5, c1 = 1.0, c2 = 1.0, w = 0.9;
 
 
 struct EdgeInfo {
@@ -79,8 +79,8 @@ public:
     void initial();
     vector<int> get_best();
     void addone(vector<int> & v);
-    void run();
-    void first_run();
+    int run();
+    int first_run();
 private:
     Particle encode(vector<int> & vini);
     vector<int> decode(vector<double> & v);
@@ -89,7 +89,7 @@ private:
     void PSO_update(Particle & s);
     vector<Particle> p;
     Particle gbest;
-    int l;
+    int l, unchanged_times;
     double GA_pm, GA_pc, PSO_c1, PSO_c2, PSO_w;
     JinTao *jintao;
 };
