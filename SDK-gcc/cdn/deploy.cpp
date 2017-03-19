@@ -29,7 +29,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     vector<int> flow;
     int best_index = liuxin.customer_num;
     int block_size = (int)(sqrt(liuxin.customer_num) + 0.1);
-    
+    double last_second = (90 >> 1) - 1;
     for (int i = 1; i <= liuxin.customer_num; i += block_size) {
         vector<int> server1 = liuxin.kmeans(i), server2;
         jintao.recover();
@@ -111,8 +111,9 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             */
         }
     }
-    int hgapso_times = hgapso.first_run() << 3;
-    while (hgapso.run() < hgapso_times && (double)clock() / CLOCKS_PER_SEC < last_second);
+    last_second -= hgapso.first_run();
+    int hgapso_times = MAX_P_SIZE << 3;
+    while ((double)clock() / CLOCKS_PER_SEC < last_second && hgapso.run() < hgapso_times);
     best_server = hgapso.get_best();
     jintao.recover();
     jintao.add_server(best_server);
@@ -135,6 +136,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     }
     write_result(topo_file, filename);
     delete []topo_file;
+
 }
 
 Particle::Particle(int length): v(length, 0.0), v_best(length, 0.0), vp(length, 0.0), cost_best(infll), cost(infll) {}
@@ -246,15 +248,17 @@ void LiuXin::spfa() {
 }
 
 vector<int> LiuXin::kmeans(int k) {
-    srand(time(0));
     vector<int> clusters(k);
     int label[customer_num], min_dist, min_index;
+    vector<vector<int> > kmean_node(k);
     knuth_shuffle(customer_nodes);
     for (int i = 0; i < k; ++i) {
         clusters[i] = customer_nodes[i].v;
     }
     bool update = true;
     while (update) {
+        for (int i = 0; i < k; i++)
+            kmean_node[i].clear();
         update = false;
         for (int i = 0; i < customer_num; ++i) {
             min_dist= inf;
@@ -269,14 +273,15 @@ vector<int> LiuXin::kmeans(int k) {
                 update = true;
                 label[i] = min_index;
             }
+            kmean_node[label[i]].push_back(i);
         }
         for (int j = 0; j < k; ++j) {
             min_dist = inf;
             min_index = -1;
             for (int l = 0; l < node_num; ++l) {
                 int dist = 0;
-                for (int i = 0; i < customer_num; ++i) {
-                    dist += label[i] == j ? d[l][customer_nodes[i].v] : 0;
+                for (int i = 0; i < kmean_node[j].size(); ++i) {
+                    dist += d[l][customer_nodes[kmean_node[j][i]].v];
                 }
                 if (dist < min_dist) {
                     min_index = l;
@@ -303,6 +308,7 @@ void JinTao::recover() {
             add_edge(u, liuxin->graph[u][i].v, liuxin->graph[u][i].w, liuxin->graph[u][i].c);
         }
     }
+
     s = liuxin->node_num + liuxin->customer_num;
     t = s + 1;
     for (int i = 0; i < liuxin->customer_num; ++i) {
@@ -567,21 +573,21 @@ int HGAPSO::run() {
     }
     */
     ++unchanged_times;
-    cout << unchanged_times << endl;
     return unchanged_times;
 }
 
-int HGAPSO::first_run() {
+double HGAPSO::first_run() {
     run();
     unchanged_times = 0;
     int best_size = get_best().size();
-    //int new_size = best_size << 2;
-    int new_size = MAX_P_SIZE;
     vector<int> v;
-    for (unsigned int  i = p.size(); i < new_size; ++i) {
+    for (unsigned int  i = p.size(); i < MAX_P_SIZE; ++i) {
         v = jintao->liuxin->kmeans(best_size);
         addone(v);
     }
-    p.resize(new_size);
-    return new_size;
+    p.resize(MAX_P_SIZE);
+    clock_t t1 = clock();
+    run();
+    clock_t t2 = clock();
+    return double(t2 - t1) / CLOCKS_PER_SEC;
 }

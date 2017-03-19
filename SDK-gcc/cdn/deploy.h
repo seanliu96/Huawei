@@ -6,12 +6,12 @@
 
 using namespace std;
 
-const int MAX_V = 1010;
+const int MAX_V = 2010;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
-const double last_second = (90 >> 1) - 1, pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
+const double pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
 const int MAX_P_SIZE = 30;
-const int kmean_times = 5;
+const int kmean_times = 2;
 
 struct EdgeInfo {
     int v, w, c;
@@ -79,7 +79,7 @@ public:
     vector<int> get_best();
     void addone(vector<int> & v);
     int run();
-    int first_run();
+    double first_run();
 private:
     Particle encode(vector<int> & v);
     vector<int> decode(vector<double> & v);
