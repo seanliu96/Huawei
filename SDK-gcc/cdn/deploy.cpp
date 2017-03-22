@@ -12,6 +12,7 @@
 #include <cstring>
 #include <ctime>
 #include <utility>
+#include <cmath>
 
 using namespace std;
 
@@ -31,7 +32,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int block_size = (int)(sqrt(fuck.customer_num) + 0.1);
     double last_second = (90 >> 1) - 1;
     //best_server = fuck.kmeans(best_index);
-    fuck.kmean(1, server);
+    fuck.kmeans(1, server);
     hgapso.addone(server);
     fuck.kmeans(best_index, best_server);
     long long best_cost = best_index * (long long)fuck.server_cost;
@@ -52,10 +53,10 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     block_size = (block_size >> 1) + 1;
     int min_index = max(best_index - block_size, 1);
     int max_index = min(best_index + block_size, fuck.customer_num);
-    int max_p_size = best_index >> 3;
-    int hgapso_times = min(200, max_p_size);
-    max_p_size = max(16, max_p_size + (max_p_size & 0x01));
-    max_p_size = min(32, max_p_size);
+    int max_p_size = 200 / log(best_index * 10);
+    max_p_size += (max_p_size & 1);
+    max_p_size = min(60, max_p_size);
+    int hgapso_times = 200;
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             //server = fuck.kmeans(i);
@@ -336,7 +337,7 @@ void Fuck::print_flow(vector<vector<int> > & node, vector<int> &flow) {
                 if (i->U > i->u) {
                     S = min(S, i->U - i->u);
                     u = v;
-                    flag=true;
+                    flag = true;
                     break;
                 }
             }
@@ -559,8 +560,8 @@ double HGAPSO::initial(int max_p_size) {
     int p_size = p.size();
     vector<int> v;
     decode(gbest.v_best, v);
-    int best_size = v.size();
-    if (p_size < max_p_size) {
+    int best_size = v.size(), limit_size = max_p_size * 0.8;
+    if (p_size < limit_size) {
         for (int i = p_size; i < max_p_size; ++i) {
             //v = fuck->kmeans(best_size);
             fuck->kmeans(best_size, v);
@@ -568,9 +569,8 @@ double HGAPSO::initial(int max_p_size) {
         }
         
     } else {
-        p_size = max_p_size * 0.7;
-        p.resize(p_size);
-        for (int i = p_size; i < max_p_size; ++i) {
+        p.resize(limit_size);
+        for (int i = limit_size; i < max_p_size; ++i) {
             //v = fuck->kmeans(best_size);
             fuck->kmeans(best_size, v);
             addone(v);
