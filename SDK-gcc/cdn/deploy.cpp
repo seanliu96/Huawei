@@ -32,11 +32,8 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int block_size = (int)(sqrt(fuck.customer_num) + 0.1);
     double last_second = (90 >> 1) - 1;
     //best_server = fuck.kmeans(best_index);
-<<<<<<< HEAD
     fuck.kmeans(1, server);
     hgapso.addone(server);
-=======
->>>>>>> 575050beba0a6d83fe5476e528e8208f63ff20b7
     fuck.kmeans(best_index, best_server);
     long long best_cost = best_index * (long long)fuck.server_cost;
     for (int i = best_index - 1; i > 1; i -= block_size) {
@@ -58,8 +55,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int max_index = min(best_index + block_size, fuck.customer_num);
     int max_p_size = 200 / log(best_index * 10);
     max_p_size += (max_p_size & 1);
-    max_p_size = min(60, max_p_size);
-    int hgapso_times = 200;
+    int hgapso_times = best_index << 3;
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             //server = fuck.kmeans(i);
@@ -68,10 +64,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
         }
     }
     last_second -= hgapso.initial(max_p_size);
-<<<<<<< HEAD
-=======
-    int hgapso_times = max_p_size * 6;
->>>>>>> 575050beba0a6d83fe5476e528e8208f63ff20b7
     while ((double)clock() / CLOCKS_PER_SEC < last_second && hgapso.run() < hgapso_times);
     //best_server = hgapso.get_best();
     hgapso.get_best(best_server);
