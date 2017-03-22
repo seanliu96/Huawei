@@ -45,7 +45,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
         }
     }
     hgapso.addone(best_server);
-    block_size >>= 1;
+    block_size = (block_size >> 1) + 1;
     int min_index = max(best_index - block_size, 1);
     int max_index = min(best_index + block_size, fuck.customer_num);
     int max_p_size = best_index / 6;
