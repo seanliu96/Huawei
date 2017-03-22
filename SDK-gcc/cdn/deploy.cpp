@@ -18,121 +18,72 @@ using namespace std;
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
     char * topo_file;
-    LiuXin liuxin;
-    liuxin.readtopo(topo, line_num);
-    liuxin.spfa();
-    JinTao jintao(liuxin);
-    HGAPSO hgapso(jintao, pm, pc, c1, c2, w);
-    vector<int> best_server;
-    long long best_cost = infll;
+    srand(time(0));
+    Fuck fuck;
+    fuck.readtopo(topo, line_num);
+    fuck.spfa();
+    HGAPSO hgapso(fuck, pm, pc, c1, c2, w);
+    vector<int> server;
     vector<vector<int> > node;
     vector<int> flow;
-    int best_index = liuxin.customer_num;
-    int block_size = (int)(sqrt(liuxin.customer_num) + 0.1);
+    int best_index = fuck.customer_num;
+    int kmean_times = 2;
+    int block_size = (int)(sqrt(fuck.customer_num) + 0.1);
     double last_second = (90 >> 1) - 1;
-    for (int i = 1; i <= liuxin.customer_num; i += block_size) {
-        vector<int> server1 = liuxin.kmeans(i), server2;
-        jintao.recover();
-        jintao.add_server(server1);
-        long long best_now = jintao.costflow() + i * (long long)liuxin.server_cost;
-        if (best_now < best_cost) {
-            best_cost = best_now;
-            best_server = server1;
-            best_index = i;
-        }
-        for (int j = 1; j < kmean_times ; ++j) {
-            server2 = liuxin.kmeans(i);
-            bool same = true;
-            for (int k = 0; k < i; ++k) {
-                if (server1[k] != server2[k]) {
-                    same = false;
-                    break;
-                }
-            }
-            if (same)
-                continue;
-            jintao.recover();
-            jintao.add_server(server2);
-            long long cost = jintao.costflow() + i * (long long)liuxin.server_cost;
-            if (cost < best_now) {
-                server1.swap(server2);
-                best_now = cost;
-                if (best_now < best_cost) {
-                    best_cost = best_now;
-                    best_server = server1;
-                    best_index = i;
-                }
+    server = fuck.kmeans(best_index);
+    hgapso.addone(server);
+    long long best_cost = best_index * (long long)fuck.server_cost;
+    for (int i = 1; i < fuck.customer_num; i += block_size) {
+        for (int j = 0; j < kmean_times ; ++j) {
+            server = fuck.kmeans(i);
+            fuck.add_server(server);
+            long long cost = fuck.costflow() + i * (long long)fuck.server_cost;
+            if (cost < best_cost) {
+                best_cost = cost;
+                best_index = i;
+                hgapso.addone(server);
             }
         }
     }
-    block_size >>= 1;
-    for (int i = max(best_index - block_size, 1); i <= min(best_index + block_size, liuxin.customer_num); i++) {
-        vector<int> server1 = liuxin.kmeans(i), server2;
-        hgapso.addone(server1);
-        //jintao.recover();
-        //jintao.add_server(server1);
-        /*
-        long long best_now = jintao.costflow() + i * (long long)liuxin.server_cost;
-        if (best_now < best_cost) {
-            best_cost = best_now;
-            best_server = server1;
-            best_index = i;
-        }
-        */
-        for (int j = 1; j < kmean_times ; ++j) {
-            server2 = liuxin.kmeans(i);
-            bool same = true;
-            for (int k = 0; k < i; ++k) {
-                if (server1[k] != server2[k]) {
-                    same = false;
-                    break;
-                }
-            }
-            if (same)
-                continue;
-            hgapso.addone(server2);
-            server1.swap(server2);
-            /*
-            jintao.recover();
-            jintao.add_server(server2);
-            */
-            /*
-            long long cost = jintao.costflow() + i * (long long)liuxin.server_cost;
-            if (cost < best_now) {
-                server1 = server2;
-                hgapso.addone(server1);
-                best_now = cost;
-                if (best_now < best_cost) {
-                    best_cost = best_now;
-                    best_server = server1;
-                    best_index = i;
-                }
-            }
-            */
+    block_size *= 0.6;
+    int min_index = max(best_index - block_size, 1);
+    int max_index = min(best_index + block_size, fuck.customer_num);
+    ++kmean_times;
+    int max_p_size = max(20, best_index / 6);
+    max_p_size = min(30, max_p_size);
+    //kmean_times <<= 1;
+    for (int i = min_index; i <= max_index; ++i) {
+        for (int j = 0; j < kmean_times; ++j) {
+            server = fuck.kmeans(i);
+            hgapso.addone(server);
         }
     }
-    last_second -= hgapso.first_run();
-    int hgapso_times = MAX_P_SIZE << 3;
+    last_second -= hgapso.initial(max_p_size);
+    int hgapso_times = max_p_size << 2;
     while ((double)clock() / CLOCKS_PER_SEC < last_second && hgapso.run() < hgapso_times);
-    best_server = hgapso.get_best();
-    jintao.recover();
-    jintao.add_server(best_server);
-    jintao.costflow();
-    jintao.print_flow(node, flow);
-    topo_file = new char[node.size() * MAX_V * 4];
+    server = hgapso.get_best();
+    fuck.add_server(server);
+    fuck.costflow();
+    fuck.print_flow(node, flow);
+    int node_size = node.size();
+    topo_file = new char[node_size * MAX_V * 5];
     topo_file[0] = '\0';
-    char tmp[MAX_V * 4];
-    sprintf(tmp, "%d\n\n", (int)node.size());
-    strcat(topo_file, tmp);
-    for (unsigned int i = 0; i < node.size(); i++) {
-        for (unsigned int j = 0; j< node[i].size(); j++) {
-            if (j == node[i].size()-1)
-                node[i][j] -= liuxin.node_num;
+    char line[MAX_V * 5];
+    char tmp[100];
+    sprintf(line, "%d\n\n", node_size);
+    strcat(topo_file, line);
+    for (int i = 0; i < node_size; ++i) {
+        line[0] = '\0';
+        int node_size_1 = node[i].size() - 1;
+        for (int j = 0; j < node_size_1; ++j) {
             sprintf(tmp, "%d ", node[i][j]);
-            strcat(topo_file, tmp);
+            strcat(line, tmp);
         }
+        sprintf(tmp, "%d ", node[i][node_size_1] - fuck.node_num);
+        strcat(line, tmp);
         sprintf(tmp, "%d\n", (int)flow[i]);
-        strcat(topo_file, tmp);
+        strcat(line, tmp);
+        strcat(topo_file, line);
     }
     write_result(topo_file, filename);
     delete []topo_file;
@@ -140,28 +91,13 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 }
 
 Particle::Particle(int length): v(length, 0.0), v_best(length, 0.0), vp(length, 0.0), cost_best(infll), cost(infll) {}
-/*
-bool operator== (const Particle & p1, const Particle & p2) {
-    return p1.cost_best == p2.cost_best && p1.cost == p2.cost;
-}
 
-bool operator< (const Particle & p1, const Particle & p2) {
-    return p1.cost_best == p2.cost_best ? p1.cost < p2.cost : p1.cost_best < p2.cost_best;
+Particle::Particle(int length, vector<int> & vi): v(length, 0.0), v_best(length, 0.0), vp(length, 0.0), cost_best(infll), cost(infll) {
+    int size = vi.size();
+    for (int i = 0; i < size; ++i) {
+        v[vi[i]] = 1.0;
+    }
 }
-
-bool operator> (const Particle & p1, const Particle & p2) {
-    return p1.cost_best == p2.cost_best ? p1.cost > p2.cost : p1.cost_best > p2.cost_best;
-}
-
-bool operator<= (const Particle & p1, const Particle & p2) {
-    return p1 < p2 || p1 == p2;
-}
-
-bool operator>= (const Particle & p1, const Particle & p2) {
-    return p1 > p2 || p1 == p2;
-}
-*/
-
 
 bool operator== (const Particle & p1, const Particle & p2) {
     return p1.cost_best == p2.cost_best && p1.cost == p2.cost;
@@ -179,6 +115,7 @@ bool operator<= (const Particle & p1, const Particle & p2) {
     return p1 < p2 || p1 == p2;
 }
 
+
 bool operator>= (const Particle & p1, const Particle & p2) {
     return p1 > p2 || p1 == p2;
 }
@@ -194,74 +131,83 @@ void knuth_shuffle(vector<T> & v) {
     }
 }
 
-void LiuXin::readtopo(char * topo[MAX_EDGE_NUM], int line_num) { 
+void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) { 
     int line = 0;
     int u, v, c, w;
     if (line < line_num)
         sscanf(topo[line], "%d %d %d", &node_num, &edge_num, &customer_num);
+    s = node_num + customer_num;
+    t = s + 1;
+    psz = 0;
+    memset(e, 0, sizeof(e));
     graph.resize(node_num, vector<EdgeInfo>());
     d.resize(node_num, vector<int>(node_num, inf));
-    customer_nodes.resize(customer_num);
-    line+=2;
+    line += 2;
     sscanf(topo[line], "%d", &server_cost);
-    line+=2;
+    line += 2;
     for (int i = 0; i < edge_num; ++i, ++line) {
         sscanf(topo[line], "%d %d %d %d", &u, &v, &w, &c);
-        graph[u].push_back((EdgeInfo){v, w, c});
-        graph[v].push_back((EdgeInfo){u, w, c});
+        graph[u].emplace_back(v, c);
+        add_edge(u, v, w, c);
+        graph[v].emplace_back(u, c);
+        add_edge(v, u, w, c);
     }
     ++line;
     need_flow = 0;
     for (int i = 0; i < customer_num; ++i, ++line) {
         sscanf(topo[line], "%d %d %d", &u, &v, &w);
-        customer_nodes[i] = (CustomerNodeInfo){u, v, w};
+        customer_nodes.emplace_back(v, w);
+        add_edge(v, u + node_num, w, 0);
+        add_edge(u + node_num, t, w, 0);
         need_flow += w;
     }
+    psz_tmp = psz;
 }
 
-void LiuXin::spfa() {
+void Fuck::spfa() {
     for(int s = 0; s < node_num; ++s) {
         d[s][s] = 0;
-        queue<int> Q;
+        deque<int> q;
         memset(vis,0,sizeof(vis));
         vis[s] = true;
-        Q.push(s);
-        while (!Q.empty()) {
-            int u = Q.front();
-            Q.pop();
+        q.push_back(s);
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop_front();
+            vis[u] = false;
             for (unsigned int i = 0; i < graph[u].size(); ++i) {
                 int v = graph[u][i].v;
                 int dis =  d[s][u] + graph[u][i].c;
                 if (dis < d[s][v])
                 { 
                     d[s][v] = dis;
-                    if (!vis[v])
-                    {
+                    if (!vis[v]) {
                         vis[v] = true;
-                        Q.push(v);
+                        if (q.size () && d[s][v] < d[s][q[0]])
+                            q.push_front(v);
+                        else
+                            q.push_back(v);
                     }
                 }
             }
-            vis[u] = false;
         }
     }
 }
 
-vector<int> LiuXin::kmeans(int k) {
-    vector<int> clusters(k);
-    int label[customer_num], min_dist, min_index;
+vector<int> Fuck::kmeans(int k) {
+    vector<int> clusters(k), label(customer_num, -1);
     vector<vector<int> > kmean_node(k);
+    int min_dist, min_index;
     knuth_shuffle(customer_nodes);
     for (int i = 0; i < k; ++i) {
         clusters[i] = customer_nodes[i].v;
     }
-    bool update = true;
-    while (update) {
-        for (int i = 0; i < k; i++)
+    while (true) {
+        for (int i = 0; i < k; ++i)
             kmean_node[i].clear();
-        update = false;
+        bool update = false;
         for (int i = 0; i < customer_num; ++i) {
-            min_dist= inf;
+            min_dist = inf;
             min_index = 0;
             for (int j = 0; j < k; ++j) {
                 if(d[clusters[j]][customer_nodes[i].v] < min_dist) {
@@ -275,12 +221,14 @@ vector<int> LiuXin::kmeans(int k) {
             }
             kmean_node[label[i]].push_back(i);
         }
+        if (!update) 
+            break;
         for (int j = 0; j < k; ++j) {
             min_dist = inf;
-            min_index = -1;
+            min_index = 0;
             for (int l = 0; l < node_num; ++l) {
                 int dist = 0;
-                for (int i = 0; i < kmean_node[j].size(); ++i) {
+                for (unsigned int i = 0; i < kmean_node[j].size(); ++i) {
                     dist += d[l][customer_nodes[kmean_node[j][i]].v];
                 }
                 if (dist < min_dist) {
@@ -291,46 +239,38 @@ vector<int> LiuXin::kmeans(int k) {
             clusters[j] = min_index;
         }
     }
-    sort(clusters.begin(), clusters.end());
     return clusters;
 }
 
-JinTao::JinTao(LiuXin & lx) {
-    liuxin = &lx;
-    recover();
-}
-
-void JinTao::recover() {
-    psz = 0;
-    memset(e, 0, sizeof(e));
-    for (unsigned int u = 0; u < liuxin->graph.size(); ++u) {
-        for (unsigned int i = 0; i < liuxin->graph[u].size(); ++i) {
-            add_edge(u, liuxin->graph[u][i].v, liuxin->graph[u][i].w, liuxin->graph[u][i].c);
+void Fuck::add_server(vector<int> & Q) {
+    if (psz != psz_tmp) {
+        psz = psz_tmp;
+        for (Edge *j = e[s]; j; j = j->next) {
+            int x = j->t;
+            e[x] = e[x]->next;
+        }
+        e[s] = 0;
+        Edge *j = epool + psz;
+        for (Edge *i = epool; i < j; ++i) {
+            i->u = i->U;
+            i->c = i->C;
         }
     }
-
-    s = liuxin->node_num + liuxin->customer_num;
-    t = s + 1;
-    for (int i = 0; i < liuxin->customer_num; ++i) {
-        add_edge(liuxin->customer_nodes[i].v, liuxin->customer_nodes[i].u + liuxin->node_num, liuxin->customer_nodes[i].w, 0);
-        add_edge(liuxin->customer_nodes[i].u + liuxin->node_num, t, liuxin->customer_nodes[i].w, 0);
-    }
-}
-
-void JinTao::add_edge(int u, int v, int w, int c) {
-    Edge *e1 = epool + psz++, *e2 = epool + psz ++;
-    *e1 = (Edge){v, w, c, w, e[u], e2}, e[u] = e1;
-    *e2 = (Edge){u, 0, -c, 0, e[v], e1}, e[v] = e2;
-}
-
-
-void JinTao::add_server(vector<int> &Q) {
-    for (unsigned int i = 0; i < Q.size(); i++) {
+    for (unsigned int i = 0; i < Q.size(); ++i) {
         add_edge(s, Q[i], inf, 0);
     }
 }
 
-void JinTao::print_flow(vector<vector<int> > & node, vector<int> &flow) {
+void Fuck::add_edge(int u, int v, int w, int c) {
+    Edge *e1 = epool + psz++, *e2 = epool + psz++;
+    *e1 = (Edge){v, w, c, w, c, e[u], e2}, e[u] = e1;
+    *e2 = (Edge){u, 0, -c, 0, -c, e[v], e1}, e[v] = e2;
+}
+
+
+void Fuck::print_flow(vector<vector<int> > & node, vector<int> &flow) {
+    node.clear();
+    flow.clear();
     while (true) {
         vector<int> Tmp;
         int u = s;
@@ -366,7 +306,7 @@ void JinTao::print_flow(vector<vector<int> > & node, vector<int> &flow) {
     }
 }
 
-int JinTao::aug(int u, int m) {
+int Fuck::aug(int u, int m) {
     if (u == t)
         return cost += (long long)dist * m, m;
     int d = m;
@@ -384,42 +324,43 @@ int JinTao::aug(int u, int m) {
     return m - d;
 }
 
-bool JinTao::modlabel() {
-    deque <int > q;
+bool Fuck::modlabel() {
+    deque <int> q;
     memset(vis , 0, sizeof(vis));
-    memset(d, 0x3f , sizeof(d));
+    memset(D, 0x3f , sizeof(D));
     q.push_back(s);
-    d[s] = 0;
+    D[s] = 0;
     vis[s] = true;
     while (!q.empty ()) {
         int u = q.front ();
         q.pop_front ();
-        vis[u] = false;
         for (Edge *i = e[u]; i; i = i->next) {
             int v = i->t;
-            if (i->u && d[u] + i->c < d[v]) {
-                d[v] = d[u] + i->c;
-                if (vis[v])
-                    continue;
-                vis[v] = true;
-                if (q.size () && d[v] < d[q[0]])
-                    q.push_front(v);
-                else
-                    q.push_back(v);
+            int dis = D[u] + i->c;
+            if (i->u && dis < D[v]) {
+                D[v] = dis;
+                if (!vis[v]) {
+                    vis[v] = true;
+                    if (q.size () && D[v] < D[q[0]])
+                        q.push_front(v);
+                    else
+                        q.push_back(v);
+                }
             }
         }
+        vis[u] = false;
     }
     for (Edge *i = epool; i < epool + psz; ++i) {
-        i->c -= d[i->t] - d[i->pair->t];
+        i->c -= D[i->t] - D[i->pair->t];
     }
-    dist += d[t];
-    return d[t] < inf;
+    dist += D[t];
+    return D[t] < inf;
 }
 
-long long JinTao::costflow() {
+long long Fuck::costflow() {
     flow = dist = 0;
     cost = 0;
-    while (modlabel ()) {
+    while (modlabel()) {
         int tmpf;
         do {
             memset(vis , 0, sizeof(vis));
@@ -427,63 +368,49 @@ long long JinTao::costflow() {
             flow += tmpf;
         } while (tmpf);
     }
-    if (flow != liuxin->need_flow)
+    if (flow != need_flow)
         cost = infll;
     return cost;
 }
 
-HGAPSO::HGAPSO(JinTao & jt, double pm, double pc, double c1, double c2, double w) {
+HGAPSO::HGAPSO(Fuck & fk, double pm, double pc, double c1, double c2, double w) {
     GA_pm = pm;
     GA_pc = pc;
     PSO_c1 = c1;
     PSO_c2 = c2;
     PSO_w = w;
-    jintao = &jt;
-    l = jintao->liuxin->node_num;
+    fuck = &fk;
+    l = fuck->node_num;
     gbest = Particle(l);
     unchanged_times = 0;
 }
 
-Particle HGAPSO::encode(vector<int> & v) {
-    Particle res = Particle(l);
-    for (unsigned int i = 0; i < v.size(); ++i) {
-        res.v[v[i]] = 1.0;
-    }
-    return res;
-}
-
-vector<int> HGAPSO::decode(vector<double> & v) {
-    vector<int> res;
+void HGAPSO::decode(vector<double> & vd, vector<int> & vi) {
+    vi.clear();
     for (int i = 0; i < l; ++i) {
-        if (v[i] > 0.5)
-            res.push_back(i);
+        if (vd[i] > 0.5)
+            vi.push_back(i);
     }
-    return res;
-}
-
-void HGAPSO::initial() {
-    p.clear();
-    unchanged_times = 0;
-    gbest = Particle(l);
 }
 
 void HGAPSO::addone(vector<int> & v) {
-    p.push_back(encode(v));
+    p.emplace_back(l, v);
 }
 
 vector<int> HGAPSO::get_best() {
-    return decode(gbest.v_best);
+    vector<int> v;
+    decode(gbest.v_best, v);
+    return v;
 }
 
 void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
     /*
-    for (int i = 0; i < l; i++) {
-        double r = (double)rand() / RAND_MAX;
-        if (r < pc) {
+    double r;
+    for (int i = 0 ;i < l; ++i) {
+        r = (double)rand() / RAND_MAX;
+        if (r < GA_pc) 
             swap(s1.v[i], s2.v[i]);
-        }   
-    }
-    */
+    }*/
     
     double r = (double)rand() / RAND_MAX;
     if (r > GA_pc)
@@ -496,36 +423,18 @@ void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
         ++r1;
     }
     
-    /*
-    int r1 = rand() % l, r2;
-    while (r1--) {
-        r2 = rand() % l;
-        swap(s1.v[r2], s2.v[r2]);
-    }
-    */
 }
 
 void HGAPSO::GA_mutation(Particle & s) {
-    
-    for (int i = 0; i < l; i++) {
-        double r = (double)rand() / RAND_MAX;
+    double r;
+    for (int i = 0; i < l; ++i) {
+        r = (double)rand() / RAND_MAX;
         if (r < GA_pm) {
             s.v[i] += ((double)rand() / RAND_MAX) * 2 - 1;
             s.v[i] = max(0.0, s.v[i]);
             s.v[i] = min(s.v[i], 1.0);
-        }   
+        }
     }
-    /*
-    if ((double)rand() / RAND_MAX > GA_pm)
-        return;
-    int r1 = rand() % (gbest.v_best.size()), r2;
-    while (r1--) {
-        r2 = rand() % l;
-        s.v[r2] += (double)rand() / RAND_MAX * 2 - 1;
-        s.v[r2] = max(0.0, s.v[r2]);
-        s.v[r2] = min(s.v[r2], 1.0);
-    }
-    */
 }
 
 void HGAPSO::PSO_update(Particle & s) {
@@ -538,12 +447,12 @@ void HGAPSO::PSO_update(Particle & s) {
 }
 
 int HGAPSO::run() {
-    int r1, r2, i = 0, k = p.size(), j = k >> 1;
-    for (int i = 0; i < k; ++i) {
-        jintao->recover();
-        vector<int> v = decode(p[i].v);
-        jintao->add_server(v);
-        p[i].cost = (long long)jintao->costflow() + v.size() * (long long)jintao->liuxin->server_cost;
+    int r1, r2, i, k = p.size(), j = k >> 1;
+    vector<int > v;
+    for (i = 0; i < k; ++i) {
+        decode(p[i].v, v);
+        fuck->add_server(v);
+        p[i].cost = (long long)fuck->costflow() + v.size() * (long long)fuck->server_cost;
         if (p[i].cost < p[i].cost_best) {
             p[i].v_best = p[i].v;
             p[i].cost_best = p[i].cost;
@@ -554,38 +463,37 @@ int HGAPSO::run() {
             }
         }
     }
-    for (i = 0; i < k; ++i) {
+    sort(p.begin(), p.end());
+    for (i = 0; i <= j; ++i) {
         PSO_update(p[i]);
     }
-    sort(p.begin(), p.end());
-    for (i = j; i < k; ++i) {
+    for (; i < k; ++i) {
         r1 = rand() % j;
         r2 = rand() % j;
         p[i] = p[r1] < p[r2] ? p[r1] : p[r2];
         GA_cross(p[i - 1], p[i]);
         GA_mutation(p[i]);
     }
-    /*
-    for (i = 1; i <= 10; i++) {
-        r1 = rand() % (k - j);
-        r2 = rand() % (k - j);
-        GA_cross(p[r1 + j], p[r2 + j]);
-    }
-    */
     ++unchanged_times;
     return unchanged_times;
 }
 
-double HGAPSO::first_run() {
-    run();
+double HGAPSO::initial(int max_p_size) {
     unchanged_times = 0;
-    int best_size = get_best().size();
-    vector<int> v;
-    for (unsigned int  i = p.size(); i < MAX_P_SIZE; ++i) {
-        v = jintao->liuxin->kmeans(best_size);
-        addone(v);
+    run();
+    int p_size = p.size();
+    if (p_size < max_p_size) {
+        vector<int> v;
+        decode(gbest.v_best, v);
+        int best_size = v.size();
+        for (int i = p_size; i < max_p_size; ++i) {
+            v = fuck->kmeans(best_size);
+            addone(v);
+        }
+        
+    } else {
+        p.resize(max_p_size);
     }
-    p.resize(MAX_P_SIZE);
     clock_t t1 = clock();
     run();
     clock_t t2 = clock();

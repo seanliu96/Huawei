@@ -10,25 +10,26 @@ const int MAX_V = 2010;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
 const double pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
-const int MAX_P_SIZE = 30;
-const int kmean_times = 2;
 
 struct EdgeInfo {
-    int v, w, c;
+    int v, c;
+    EdgeInfo(int _v, int _c): v(_v), c(_c) {}
 };
 
 struct CustomerNodeInfo {
-    int u, v, w;
+    int v, w;
+    CustomerNodeInfo(int _v, int _w): v(_v), w(_w) {}
 };
 
 struct Edge {
-    int t, u, c, U;
+    int t, u, c, U, C;
     Edge *next, *pair;
 };
 
 class Particle {
 public:
     Particle(int length=0);
+    Particle(int length, vector<int> & vi);
     vector<double> v;
     vector<double> v_best;
     vector<double> vp;
@@ -41,48 +42,38 @@ public:
     friend bool operator>= (const Particle & p1, const Particle & p2);
 };
 
-class LiuXin {
+class Fuck {
 public:
+    void add_server(vector<int> & Q);
+    void add_edge(int u, int v, int w, int c);
+    long long costflow();
+    void print_flow(vector<vector<int> > &node, vector<int> &flow);
     void readtopo(char * topo[MAX_EDGE_NUM], int line_num);
     void spfa();
     vector<int> kmeans(int k);
+    int need_flow, node_num, edge_num, customer_num, server_cost;
+private:
+    int aug(int u, int m);
+    bool modlabel();
     vector<vector<EdgeInfo> > graph;
     vector<CustomerNodeInfo> customer_nodes;
     vector<vector<int> > d;
     bool vis[MAX_V];
-    int need_flow, node_num, edge_num, customer_num, server_cost;
-};
-
-class JinTao {
-public:
-    JinTao(LiuXin & lx);
-    LiuXin *liuxin;
-    void recover();
-    void add_edge(int u, int v, int w, int c);
-    void add_server(vector<int> &Q);
-    long long costflow();
-    void print_flow(vector<vector<int> > &node, vector<int> &flow);
-private:
-    int aug(int u, int m);
-    bool modlabel();
-    Edge epool[MAX_EDGE_NUM * 4 + 3000], *e[MAX_V];
-    int psz, s, t;
-    int flow, dist, d[MAX_V];
+    Edge epool[MAX_EDGE_NUM * 5], *e[MAX_V];
+    int psz, s, t, psz_tmp;
+    int flow, dist, D[MAX_V];
     long long cost;
-    bool vis[MAX_V];
 };
 
 class HGAPSO {
 public:
-    HGAPSO(JinTao & jt, double pm, double pc, double c1, double c2, double w);
-    void initial();
+    HGAPSO(Fuck & fuck, double pm, double pc, double c1, double c2, double w);
     vector<int> get_best();
     void addone(vector<int> & v);
     int run();
-    double first_run();
+    double initial(int max_p_size);
 private:
-    Particle encode(vector<int> & v);
-    vector<int> decode(vector<double> & v);
+    void decode(vector<double> & vd, vector<int> & vi);
     void GA_cross(Particle & s1, Particle & s2);
     void GA_mutation(Particle & s);
     void PSO_update(Particle & s);
@@ -90,7 +81,7 @@ private:
     Particle gbest;
     int l, unchanged_times;
     double GA_pm, GA_pc, PSO_c1, PSO_c2, PSO_w;
-    JinTao *jintao;
+    Fuck *fuck;
 };
 
 template <class T>
