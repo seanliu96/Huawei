@@ -51,6 +51,7 @@ public:
     void readtopo(char * topo[MAX_EDGE_NUM], int line_num);
     void spfa();
     vector<int> kmeans(int k);
+    void kmeans(int k, vector<int> & clusters);
     int need_flow, node_num, edge_num, customer_num, server_cost;
 private:
     int aug(int u, int m);
@@ -69,6 +70,7 @@ class HGAPSO {
 public:
     HGAPSO(Fuck & fuck, double pm, double pc, double c1, double c2, double w);
     vector<int> get_best();
+    void get_best(vector<int> & server);
     void addone(vector<int> & v);
     int run();
     double initial(int max_p_size);

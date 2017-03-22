@@ -30,11 +30,13 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int kmean_times = 2;
     int block_size = (int)(sqrt(fuck.customer_num) + 0.1);
     double last_second = (90 >> 1) - 1;
-    best_server = fuck.kmeans(best_index);
+    //best_server = fuck.kmeans(best_index);
+    fuck.kmeans(best_index, best_server);
     long long best_cost = best_index * (long long)fuck.server_cost;
     for (int i = best_index - 1; i >= 1; i -= block_size) {
         for (int j = 0; j < kmean_times ; ++j) {
-            server = fuck.kmeans(i);
+            //server = fuck.kmeans(i);
+            fuck.kmeans(i, server);
             fuck.add_server(server);
             long long cost = fuck.costflow() + i * (long long)fuck.server_cost;
             if (cost < best_cost) {
@@ -53,16 +55,17 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     max_p_size = min(30, max_p_size);
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
-            server = fuck.kmeans(i);
+            //server = fuck.kmeans(i);
+            fuck.kmeans(i, server);
             hgapso.addone(server);
         }
     }
     last_second -= hgapso.initial(max_p_size);
-    int hgapso_times = max_p_size << 3;
+    int hgapso_times = max_p_size * 6;
     while ((double)clock() / CLOCKS_PER_SEC < last_second && hgapso.run() < hgapso_times);
-    best_server = hgapso.get_best();
-    fuck.add_server(best_server
-        );
+    //best_server = hgapso.get_best();
+    hgapso.get_best(best_server);
+    fuck.add_server(best_server);
     fuck.costflow();
     fuck.print_flow(node, flow);
     int node_size = node.size();
@@ -242,6 +245,55 @@ vector<int> Fuck::kmeans(int k) {
     return clusters;
 }
 
+void Fuck::kmeans(int k, vector<int> & clusters) {
+    clusters.resize(k);
+    int label[MAX_V];
+    memset(label, -1, sizeof(label));
+    vector<vector<int> > kmean_node(k);
+    int min_dist, min_index;
+    knuth_shuffle(customer_nodes);
+    for (int i = 0; i < k; ++i) {
+        clusters[i] = customer_nodes[i].v;
+    }
+    while (true) {
+        for (int i = 0; i < k; ++i)
+            kmean_node[i].clear();
+        bool update = false;
+        for (int i = 0; i < customer_num; ++i) {
+            min_dist = inf;
+            min_index = 0;
+            for (int j = 0; j < k; ++j) {
+                if(d[clusters[j]][customer_nodes[i].v] < min_dist) {
+                    min_dist = d[clusters[j]][customer_nodes[i].v];
+                    min_index = j;
+                }
+            }
+            if (label[i] != min_index) {
+                update = true;
+                label[i] = min_index;
+            }
+            kmean_node[label[i]].push_back(i);
+        }
+        if (!update) 
+            break;
+        for (int j = 0; j < k; ++j) {
+            min_dist = inf;
+            min_index = 0;
+            for (int l = 0; l < node_num; ++l) {
+                int dist = 0;
+                for (unsigned int i = 0; i < kmean_node[j].size(); ++i) {
+                    dist += d[l][customer_nodes[kmean_node[j][i]].v];
+                }
+                if (dist < min_dist) {
+                    min_index = l;
+                    min_dist = dist;
+                }
+            }
+            clusters[j] = min_index;
+        }
+    }
+}
+
 void Fuck::add_server(vector<int> & Q) {
     if (psz != psz_tmp) {
         psz = psz_tmp;
@@ -403,6 +455,10 @@ vector<int> HGAPSO::get_best() {
     return v;
 }
 
+void HGAPSO::get_best(vector<int> & server) {
+    decode(gbest.v_best, server);
+}
+
 void HGAPSO::GA_cross(Particle & s1, Particle & s2) {
     /*
     double r;
@@ -487,7 +543,8 @@ double HGAPSO::initial(int max_p_size) {
         decode(gbest.v_best, v);
         int best_size = v.size();
         for (int i = p_size; i < max_p_size; ++i) {
-            v = fuck->kmeans(best_size);
+            //v = fuck->kmeans(best_size);
+            fuck->kmeans(best_size, v);
             addone(v);
         }
         
