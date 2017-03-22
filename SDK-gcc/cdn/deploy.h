@@ -10,6 +10,8 @@ const int MAX_V = 2010;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
 const double pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
+//const double alpha = 0.995;
+//const double pm = 0.2, pc = 1.2, c1 = 2.0, c2 = 2.0, w = 0.9;
 
 struct EdgeInfo {
     int v, c;
@@ -51,6 +53,7 @@ public:
     void readtopo(char * topo[MAX_EDGE_NUM], int line_num);
     void spfa();
     vector<int> kmeans(int k);
+    void kmeans(int k, vector<int> & clusters);
     int need_flow, node_num, edge_num, customer_num, server_cost;
 private:
     int aug(int u, int m);
@@ -67,8 +70,9 @@ private:
 
 class HGAPSO {
 public:
-    HGAPSO(Fuck & fuck, double pm, double pc, double c1, double c2, double w);
+    HGAPSO(Fuck & fuck);
     vector<int> get_best();
+    void get_best(vector<int> & server);
     void addone(vector<int> & v);
     int run();
     double initial(int max_p_size);
