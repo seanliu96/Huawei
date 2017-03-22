@@ -23,17 +23,16 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     fuck.readtopo(topo, line_num);
     fuck.spfa();
     HGAPSO hgapso(fuck, pm, pc, c1, c2, w);
-    vector<int> server;
+    vector<int> server, best_server;
     vector<vector<int> > node;
     vector<int> flow;
     int best_index = fuck.customer_num;
     int kmean_times = 2;
     int block_size = (int)(sqrt(fuck.customer_num) + 0.1);
     double last_second = (90 >> 1) - 1;
-    server = fuck.kmeans(best_index);
-    hgapso.addone(server);
+    best_server = fuck.kmeans(best_index);
     long long best_cost = best_index * (long long)fuck.server_cost;
-    for (int i = 1; i < fuck.customer_num; i += block_size) {
+    for (int i = best_index - 1; i >= 1; i -= block_size) {
         for (int j = 0; j < kmean_times ; ++j) {
             server = fuck.kmeans(i);
             fuck.add_server(server);
@@ -41,17 +40,17 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             if (cost < best_cost) {
                 best_cost = cost;
                 best_index = i;
-                hgapso.addone(server);
+                best_server.swap(server);
             }
         }
     }
-    block_size *= 0.6;
+    hgapso.addone(best_server);
+    block_size >>= 1;
     int min_index = max(best_index - block_size, 1);
     int max_index = min(best_index + block_size, fuck.customer_num);
-    ++kmean_times;
-    int max_p_size = max(20, best_index / 6);
+    int max_p_size = best_index / 6;
+    max_p_size = max(20, best_index + (best_index & 0x01));
     max_p_size = min(30, max_p_size);
-    //kmean_times <<= 1;
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             server = fuck.kmeans(i);
@@ -59,10 +58,11 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
         }
     }
     last_second -= hgapso.initial(max_p_size);
-    int hgapso_times = max_p_size << 2;
+    int hgapso_times = max_p_size << 3;
     while ((double)clock() / CLOCKS_PER_SEC < last_second && hgapso.run() < hgapso_times);
-    server = hgapso.get_best();
-    fuck.add_server(server);
+    best_server = hgapso.get_best();
+    fuck.add_server(best_server
+        );
     fuck.costflow();
     fuck.print_flow(node, flow);
     int node_size = node.size();
