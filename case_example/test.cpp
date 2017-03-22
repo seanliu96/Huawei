@@ -113,7 +113,9 @@ long long judge(char * filename) {
             return cost;
         }
     }
-    cost += server_cost * servers.size();
+    int servers_size = servers.size();
+    cout << servers_size << ": ";
+    cost += server_cost * servers_size;
     fin.close();
     return cost;
 }
