@@ -74,13 +74,16 @@ long long judge(char * filename) {
     stringstream ss(buf);
     ss >> size;
     getline(fin, buf);
+    cout<<graph[100][6].w<<endl;
     for (int i = 0; i < size; ++i) {
         line.clear();
         getline(fin, buf);
         stringstream sss(buf);
         while (sss >> n) {
+            cout << n << " ";
             line.push_back(n);
         }
+        cout << endl;
         flow = line[line.size() - 1];
         servers.insert(line[0]);
         for (int j = 0; j < line.size() - 3; ++j) {
@@ -90,7 +93,9 @@ long long judge(char * filename) {
                     find = true;
                     graph[line[j]][k].w -= flow;
                     cost += graph[line[j]][k].c * flow;
+                    if (line[j]==100&&graph[line[j]][k].v==35) cout<<flow<<' '<<graph[line[j]][k].w<<' '<<k<<endl;
                     if (graph[line[j]][k].w < 0) {
+                        cout << line[j] << " " << graph[line[j]][k].v << endl;
                         cost = infll;
                         fin.close();
                         return cost;

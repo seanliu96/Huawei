@@ -9,7 +9,7 @@
 #include <signal.h>
 
 #define MAX_LINE_LEN 55000
-#define _DEBUG
+
 #define INLINE  static __inline
 #ifdef _DEBUG
 #define PRINT   printf

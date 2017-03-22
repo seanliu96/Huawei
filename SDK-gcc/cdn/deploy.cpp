@@ -56,6 +56,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int max_p_size = 200 / log(best_index * 10);
     max_p_size += (max_p_size & 1);
     int hgapso_times = best_index << 3;
+    hgapso_times = min(200, hgapso_times);
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             //server = fuck.kmeans(i);
@@ -68,7 +69,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     //best_server = hgapso.get_best();
     hgapso.get_best(best_server);
     fuck.add_server(best_server);
-    fuck.costflow();
+    cout << "cost: " << fuck.costflow() << endl;
     fuck.print_flow(node, flow);
     int node_size = node.size();
     topo_file = new char[node_size * MAX_V * 5];
