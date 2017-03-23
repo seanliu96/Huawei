@@ -30,7 +30,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int best_index = fuck.customer_num;
     int kmean_times = 2;
     int block_size = (int)(sqrt(fuck.customer_num) + 0.1);
-    double last_second = (90 >> 1) - 1;
+    double last_second = 90 - 1;
     //best_server = fuck.kmeans(best_index);
     fuck.kmeans(1, server);
     hgapso.addone(server);
@@ -56,7 +56,8 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int max_p_size = 200 / log(best_index * 10);
     max_p_size += (max_p_size & 1);
     int hgapso_times = best_index << 3;
-    hgapso_times = min(200, hgapso_times);
+    cout << " size: " << max_p_size;
+    cout << " times: " << hgapso_times;
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             //server = fuck.kmeans(i);
@@ -69,7 +70,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     //best_server = hgapso.get_best();
     hgapso.get_best(best_server);
     fuck.add_server(best_server);
-    cout << "cost: " << fuck.costflow() << endl;
+    cout << " cost: " << fuck.costflow();
     fuck.print_flow(node, flow);
     int node_size = node.size();
     topo_file = new char[node_size * MAX_V * 5];
@@ -93,7 +94,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     }
     write_result(topo_file, filename);
     delete []topo_file;
-
+    cout << " time:" << (double)clock() / CLOCKS_PER_SEC << endl;
 }
 
 Particle::Particle(int length): v(length, 0.0), v_best(length, 0.0), vp(length, 0.0), cost_best(infll), cost(infll) {}
