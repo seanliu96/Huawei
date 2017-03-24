@@ -453,7 +453,7 @@ void HGAPSO::cross(Particle & s1, Particle & s2) {
     //cout << "cross:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
-void HGAPSO::OBMA(Particle & s) {
+void HGAPSO::OBMA(Particle s) {
     //clock_t t1 = clock();
     vector<double> v(s.v);
     vector<int> server, unserver;
@@ -485,6 +485,7 @@ void HGAPSO::OBMA(Particle & s) {
         if (cost < best_cost) {
             s.v = v;
             s.cost = cost;
+            p.push_back(s);
             if (cost < s.cost_best) {
                 s.v_best = v;
                 s.cost_best = cost;
@@ -555,13 +556,16 @@ void HGAPSO::run() {
     */
     for (i = 0; i < k; ++i)
         OBMA(p[i]);
+    sort(p.begin(), p.end(), cmp);
+    p.resize(max_p_size);
     PSO_c1 *= alpha;
     PSO_c2 *= alpha;
     PSO_w *= alpha;
     //cout << gbest.cost_best << endl;
 }
 
-double HGAPSO::initial(int max_p_size) {
+double HGAPSO::initial(int size) {
+    max_p_size = size;
     int p_size = p.size(), limit_size = max_p_size * 3 >> 2;
     vector<int> v;
     sort(p.begin(), p.end(), cmp);
