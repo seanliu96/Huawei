@@ -60,13 +60,6 @@ public:
     vector<double> vp;
     long long cost_best;
     long long cost;
-    /*
-    friend bool operator== (const Particle & p1, const Particle & p2);
-    friend bool operator< (const Particle & p1, const Particle & p2);
-    friend bool operator<= (const Particle & p1, const Particle & p2);
-    friend bool operator> (const Particle & p1, const Particle & p2);
-    friend bool operator>= (const Particle & p1, const Particle & p2);
-    */
 };
 
 class HGAPSO {
@@ -84,7 +77,7 @@ private:
     vector<Particle> p;
     vector<int> H;
     Particle gbest;
-    int l, unchanged_times, iter;
+    int l, iter;
     double GA_pm, GA_pc, PSO_c1, PSO_c2, PSO_w;
     Fuck *fuck;
 };

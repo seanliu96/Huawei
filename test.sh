@@ -2,7 +2,8 @@
 
 dir1=SDK-gcc
 dir2=case_example
-logfile=score
+datetime=`date +%m%d%H%M`
+logfile="score"${datetime}
 
 cd $dir1
 ./build.sh

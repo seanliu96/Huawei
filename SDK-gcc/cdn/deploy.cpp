@@ -49,7 +49,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     }
     hgapso.addone(best_server);
     block_size = (block_size >> 1);
-    //kmean_times <<= 1;
     int min_index = max(best_index - block_size, 1);
     int max_index = min(best_index + block_size, fuck.customer_num);
     int max_p_size = 128 / log(best_index << 3);
@@ -386,6 +385,7 @@ void HGAPSO::get_best(vector<int> & server) {
 }
 
 void HGAPSO::cross(Particle & s1, Particle & s2) {
+    //clock_t t1 = clock();
     vector<double> v1(l, 0), v2(l, 0);
     int m = 0, l_2 = l >> 1;
     vector<int> node1, node2;
@@ -414,41 +414,47 @@ void HGAPSO::cross(Particle & s1, Particle & s2) {
         for (int i = 0; i < j; ++i)
             v2[node1[i]] = v1[node1[i]];
     }
-    s1.v = v1;
-    s2.v = v2;
     decode(v1, node1);
     fuck->add_server(node1);
     cost = fuck->costflow() + node1.size() * fuck->server_cost;
-    s1.cost = cost;
-    if (cost < s1.cost_best) {
-        s1.cost_best = cost;
-        s1.v_best = v1;
-        if (cost < gbest.cost_best) {
-            gbest.cost_best = cost;
-            gbest.v_best = v1;
-            PSO_c1 = c1;
-            PSO_c2 = c2;
-            PSO_w = w;
+    if (cost < s1.cost) {
+        s1.cost = cost;
+        s1.v = v1;
+        if (cost < s1.cost_best) {
+            s1.cost_best = cost;
+            s1.v_best = v1;
+            if (cost < gbest.cost_best) {
+                gbest.cost_best = cost;
+                gbest.v_best = v1;
+                PSO_c1 = c1;
+                PSO_c2 = c2;
+                PSO_w = w;
+            }
         }
     }
     decode(v2, node2);
     fuck->add_server(node2);
     cost = fuck->costflow() + node1.size() * fuck->server_cost;
-    s2.cost = cost;
-    if (cost < s2.cost_best) {
-        s2.cost_best = cost;
-        s2.v_best = v2;
-        if (cost < gbest.cost_best) {
-            gbest.cost_best = cost;
-            gbest.v_best = v2;
-            PSO_c1 = c1;
-            PSO_c2 = c2;
-            PSO_w = w;
+    if (cost < s2.cost) {
+        s2.cost = cost;
+        s2.v = v2;
+        if (cost < s2.cost_best) {
+            s2.cost_best = cost;
+            s2.v_best = v2;
+            if (cost < gbest.cost_best) {
+                gbest.cost_best = cost;
+                gbest.v_best = v2;
+                PSO_c1 = c1;
+                PSO_c2 = c2;
+                PSO_w = w;
+            }
         }
     }
+    //cout << "cross:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 void HGAPSO::OBMA(Particle & s) {
+    //clock_t t1 = clock();
     vector<double> v(s.v);
     vector<int> server, unserver;
     for (int i = 0; i < l; ++i) {
@@ -492,13 +498,16 @@ void HGAPSO::OBMA(Particle & s) {
         PSO_c2 = c2;
         PSO_w = w;
     }
+    //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 void HGAPSO::PSO_update(Particle & s) {
+    //clock_t t1 = clock();
     vector<int> v;
     long long cost;
     for (int i = 0; i < l; ++i) {
         s.vp[i] = PSO_w * s.vp[i] + PSO_c1 * rand() / RAND_MAX * (s.v_best[i] - s.v[i]) + PSO_c2 * rand() / RAND_MAX * (gbest.v_best[i] - s.v[i]); 
+        //s.v[i] = 1 / (1 + exp(0.5 - s.v[i] - s.vp[i]));
         s.v[i] = s.v[i] + s.vp[i];
         s.v[i] = max(0.0, s.v[i]);
         s.v[i] = min(s.v[i], 1.0);
@@ -518,15 +527,17 @@ void HGAPSO::PSO_update(Particle & s) {
             PSO_w = w;
         }
     }
+    //cout << "PSO:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 void HGAPSO::run() {
-    int r1, r2, i, k = p.size(), j = k >> 1;
+    int r1, r2, i, k = p.size(), j = k * 3 >> 2;
     vector<int > v;
+    
     for (i = 0; i < k; ++i) {
         PSO_update(p[i]);
-        OBMA(p[i]);
     }
+    /* 
     sort(p.begin(), p.end(), cmp);
     for (i = k - 1; i >=j; i -= 2) {
         r1 = rand() % j;
@@ -541,6 +552,9 @@ void HGAPSO::run() {
         p[i] = cmp(p[r1], p[r2]) ? p[r1] : p[r2];
         cross(p[i-1], p[i]);
     }
+    */
+    for (i = 0; i < k; ++i)
+        OBMA(p[i]);
     PSO_c1 *= alpha;
     PSO_c2 *= alpha;
     PSO_w *= alpha;
@@ -548,7 +562,7 @@ void HGAPSO::run() {
 }
 
 double HGAPSO::initial(int max_p_size) {
-    int p_size = p.size(), limit_size = max_p_size * 0.7;
+    int p_size = p.size(), limit_size = max_p_size * 3 >> 2;
     vector<int> v;
     sort(p.begin(), p.end(), cmp);
     gbest = p[0];
