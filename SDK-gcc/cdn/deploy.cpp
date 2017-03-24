@@ -485,11 +485,11 @@ void HGAPSO::OBMA(Particle s) {
         if (cost < best_cost) {
             s.v = v;
             s.cost = cost;
-            p.push_back(s);
             if (cost < s.cost_best) {
                 s.v_best = v;
                 s.cost_best = cost;
             }
+            p.push_back(s);
         }
     }
     if (s.cost_best < gbest.cost_best) {
@@ -537,7 +537,10 @@ void HGAPSO::run() {
     
     for (i = 0; i < k; ++i) {
         PSO_update(p[i]);
+        OBMA(p[i]);
     }
+    sort(p.begin(), p.end(), cmp);
+    p.resize(max_p_size);
     /* 
     sort(p.begin(), p.end(), cmp);
     for (i = k - 1; i >=j; i -= 2) {
@@ -553,11 +556,9 @@ void HGAPSO::run() {
         p[i] = cmp(p[r1], p[r2]) ? p[r1] : p[r2];
         cross(p[i-1], p[i]);
     }
-    */
     for (i = 0; i < k; ++i)
         OBMA(p[i]);
-    sort(p.begin(), p.end(), cmp);
-    p.resize(max_p_size);
+    */
     PSO_c1 *= alpha;
     PSO_c2 *= alpha;
     PSO_w *= alpha;
