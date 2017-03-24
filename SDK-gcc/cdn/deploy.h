@@ -9,9 +9,8 @@ using namespace std;
 const int MAX_V = 2010;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
-//const double pm = 0.1, pc = 0.6, c1 = 1.0, c2 = 1.0, w = 0.9;
 const double alpha = 0.995;
-const double pm = 0.2, pc = 1.2, c1 = 2.0, c2 = 2.0, w = 0.9;
+const double c1 = 2.0, c2 = 2.0, w = 0.9;
 
 struct EdgeInfo {
     int v, c;
@@ -26,22 +25,6 @@ struct CustomerNodeInfo {
 struct Edge {
     int t, u, c, U, C;
     Edge *next, *pair;
-};
-
-class Particle {
-public:
-    Particle(int length=0);
-    Particle(int length, vector<int> & vi);
-    vector<double> v;
-    vector<double> v_best;
-    vector<double> vp;
-    long long cost_best;
-    long long cost;
-    friend bool operator== (const Particle & p1, const Particle & p2);
-    friend bool operator< (const Particle & p1, const Particle & p2);
-    friend bool operator<= (const Particle & p1, const Particle & p2);
-    friend bool operator> (const Particle & p1, const Particle & p2);
-    friend bool operator>= (const Particle & p1, const Particle & p2);
 };
 
 class Fuck {
@@ -68,17 +51,34 @@ private:
     long long cost;
 };
 
+class Particle {
+public:
+    Particle(int length=0);
+    Particle(int length, vector<int> & vi, Fuck* & fuck);
+    vector<double> v;
+    vector<double> v_best;
+    vector<double> vp;
+    long long cost_best;
+    long long cost;
+    /*
+    friend bool operator== (const Particle & p1, const Particle & p2);
+    friend bool operator< (const Particle & p1, const Particle & p2);
+    friend bool operator<= (const Particle & p1, const Particle & p2);
+    friend bool operator> (const Particle & p1, const Particle & p2);
+    friend bool operator>= (const Particle & p1, const Particle & p2);
+    */
+};
+
 class HGAPSO {
 public:
     HGAPSO(Fuck & fuck);
     void get_best(vector<int> & server);
     void addone(vector<int> & v);
-    int run();
-    double initial(int max_p_size, int & best_size);
+    void run();
+    double initial(int max_p_size);
 private:
     void decode(vector<double> & vd, vector<int> & vi);
-    void GA_cross(Particle & s1, Particle & s2);
-    void GA_mutation(Particle & s);
+    void cross(Particle & s1, Particle & s2);
     void OBMA(Particle & s);
     void PSO_update(Particle & s);
     vector<Particle> p;
@@ -91,6 +91,8 @@ private:
 
 template <class T>
 void knuth_shuffle(vector<T> & v);
+
+bool cmp(const Particle & p1, const Particle & p2);
 
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename);
 
