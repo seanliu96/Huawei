@@ -453,18 +453,41 @@ void HGAPSO::cross(Particle & s1, Particle & s2) {
     //cout << "cross:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
-void HGAPSO::OBMA(Particle s) {
+void HGAPSO::OBMA(Particle & s) {
     //clock_t t1 = clock();
+    //vector<double> v(s.v), v_(l);
     vector<double> v(s.v);
     vector<int> server, unserver;
     for (int i = 0; i < l; ++i) {
-        if (v[i] > 0.5)
+        //v_[i] = 1 - v[i];
+        if (v[i] > 0.5) {
             server.push_back(i);
-        else
+        } else {
             unserver.push_back(i);
+        }
     }
     long long best_cost = s.cost, cost;
+    //int server_index, unserver_index, server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no, l_2 = l >> 1;
     int server_index, unserver_index, server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no;
+    /*
+    knuth_shuffle(server);
+    knuth_shuffle(unserver);
+    if (server_size < l_2) {
+        for (int i = server_size; i < unserver_size; ++i)
+            v_[unserver[i]] = v[unserver[i]];
+    } else if (server_size > l_2) {
+        for (int i = unserver_size; i < server_size; ++i) {
+            v_[server[i]] = v[server[i]];
+        }
+    }
+    for (int i = 0; i < l; ++i) {
+        if (v_[i] > 0.5) {
+            server_.push_back(i);
+        } else {
+            unserver_.push_back(i);
+        }
+    }
+    */
     for (int k = 0; k < 5; ++k) {
         ++iter;
         int T_iter = 15 * ((iter >> 8) + 1);
@@ -485,12 +508,37 @@ void HGAPSO::OBMA(Particle s) {
         if (cost < best_cost) {
             s.v = v;
             s.cost = cost;
+            best_cost = cost;
             if (cost < s.cost_best) {
                 s.v_best = v;
                 s.cost_best = cost;
             }
-            p.push_back(s);
         }
+        /*
+        do {
+            server_index = rand() % server_size;
+            server_no = server_[server_index];
+        } while (iter < H[server_no]);
+        H[server_no] = T_iter;
+        do {
+            unserver_index = rand() % unserver_size;
+            unserver_no = unserver_[unserver_index];
+        } while (iter < H[unserver_no]);
+        H[unserver_no] = 0.7 * T_iter;
+        swap(v_[server_no], v_[unserver_no]);
+        swap(server_[server_index], unserver_[unserver_index]);
+        fuck->add_server(server_);
+        cost = fuck->costflow() + server.size() * fuck->server_cost;
+        if (cost < best_cost) {
+            s.v = v_;
+            s.cost = cost;
+            best_cost = cost;
+            if (cost < s.cost_best) {
+                s.v_best = v_;
+                s.cost_best = cost;
+            }
+        }
+        */
     }
     if (s.cost_best < gbest.cost_best) {
         gbest.v_best = s.v_best;
@@ -508,7 +556,6 @@ void HGAPSO::PSO_update(Particle & s) {
     long long cost;
     for (int i = 0; i < l; ++i) {
         s.vp[i] = PSO_w * s.vp[i] + PSO_c1 * rand() / RAND_MAX * (s.v_best[i] - s.v[i]) + PSO_c2 * rand() / RAND_MAX * (gbest.v_best[i] - s.v[i]); 
-        //s.v[i] = 1 / (1 + exp(0.5 - s.v[i] - s.vp[i]));
         s.v[i] = s.v[i] + s.vp[i];
         s.v[i] = max(0.0, s.v[i]);
         s.v[i] = min(s.v[i], 1.0);
@@ -532,33 +579,28 @@ void HGAPSO::PSO_update(Particle & s) {
 }
 
 void HGAPSO::run() {
-    int r1, r2, i, k = p.size(), j = k * 3 >> 2;
-    vector<int > v;
-    
-    for (i = 0; i < k; ++i) {
-        PSO_update(p[i]);
+    int r1, r2, i, k = p.size(), j = k >> 2;
+    for (i = 0; i < j; ++i) {
         OBMA(p[i]);
     }
+    for (; i < k; ++i)
+        PSO_update(p[i]);
     sort(p.begin(), p.end(), cmp);
-    p.resize(max_p_size);
-    /* 
-    sort(p.begin(), p.end(), cmp);
-    for (i = k - 1; i >=j; i -= 2) {
-        r1 = rand() % j;
+    /*
+    knuth_shuffle(p);
+    for (i = k - 1; i >=1; i -= 2) {
+        r1 = rand() % k;
         do {
-            r2 = rand() % j;
+            r2 = rand() % k;
         } while (r1 == r2);
         p[i-1] = cmp(p[r1], p[r2]) ? p[r1] : p[r2];
-        r1 = rand() % j;
+        r1 = rand() % k;
         do {
-            r2 = rand() % j;
+            r2 = rand() % k;
         } while (r1 == r2);
         p[i] = cmp(p[r1], p[r2]) ? p[r1] : p[r2];
         cross(p[i-1], p[i]);
-    }
-    for (i = 0; i < k; ++i)
-        OBMA(p[i]);
-    */
+    }*/
     PSO_c1 *= alpha;
     PSO_c2 *= alpha;
     PSO_w *= alpha;

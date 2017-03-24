@@ -72,13 +72,13 @@ public:
 private:
     void decode(vector<double> & vd, vector<int> & vi);
     void cross(Particle & s1, Particle & s2);
-    void OBMA(Particle s);
+    void OBMA(Particle & s);
     void PSO_update(Particle & s);
     vector<Particle> p;
     vector<int> H;
     Particle gbest;
     int l, iter, max_p_size;
-    double GA_pm, GA_pc, PSO_c1, PSO_c2, PSO_w;
+    double PSO_c1, PSO_c2, PSO_w;
     Fuck *fuck;
 };
 

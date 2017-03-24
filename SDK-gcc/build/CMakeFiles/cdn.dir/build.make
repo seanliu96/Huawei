@@ -34,19 +34,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/bin/cmake
+CMAKE_COMMAND = /usr/local/Cellar/cmake/3.7.2/bin/cmake
 
 # The command to remove a file.
-RM = /usr/bin/cmake -E remove -f
+RM = /usr/local/Cellar/cmake/3.7.2/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sean/Workspace/Huawei/SDK-gcc/cdn
+CMAKE_SOURCE_DIR = /Users/Sean/Workspace/Huawei/SDK-gcc/cdn
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sean/Workspace/Huawei/SDK-gcc/build
+CMAKE_BINARY_DIR = /Users/Sean/Workspace/Huawei/SDK-gcc/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/cdn.dir/depend.make
@@ -58,17 +58,17 @@ include CMakeFiles/cdn.dir/progress.make
 include CMakeFiles/cdn.dir/flags.make
 
 CMakeFiles/cdn.dir/cdn.cpp.o: CMakeFiles/cdn.dir/flags.make
-CMakeFiles/cdn.dir/cdn.cpp.o: /home/sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cdn.dir/cdn.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cdn.dir/cdn.cpp.o -c /home/sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp
+CMakeFiles/cdn.dir/cdn.cpp.o: /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/Sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cdn.dir/cdn.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cdn.dir/cdn.cpp.o -c /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp
 
 CMakeFiles/cdn.dir/cdn.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cdn.dir/cdn.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp > CMakeFiles/cdn.dir/cdn.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp > CMakeFiles/cdn.dir/cdn.cpp.i
 
 CMakeFiles/cdn.dir/cdn.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cdn.dir/cdn.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp -o CMakeFiles/cdn.dir/cdn.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/cdn.cpp -o CMakeFiles/cdn.dir/cdn.cpp.s
 
 CMakeFiles/cdn.dir/cdn.cpp.o.requires:
 
@@ -82,17 +82,17 @@ CMakeFiles/cdn.dir/cdn.cpp.o.provides.build: CMakeFiles/cdn.dir/cdn.cpp.o
 
 
 CMakeFiles/cdn.dir/deploy.cpp.o: CMakeFiles/cdn.dir/flags.make
-CMakeFiles/cdn.dir/deploy.cpp.o: /home/sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/cdn.dir/deploy.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cdn.dir/deploy.cpp.o -c /home/sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp
+CMakeFiles/cdn.dir/deploy.cpp.o: /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/Sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/cdn.dir/deploy.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cdn.dir/deploy.cpp.o -c /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp
 
 CMakeFiles/cdn.dir/deploy.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cdn.dir/deploy.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp > CMakeFiles/cdn.dir/deploy.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp > CMakeFiles/cdn.dir/deploy.cpp.i
 
 CMakeFiles/cdn.dir/deploy.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cdn.dir/deploy.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp -o CMakeFiles/cdn.dir/deploy.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/deploy.cpp -o CMakeFiles/cdn.dir/deploy.cpp.s
 
 CMakeFiles/cdn.dir/deploy.cpp.o.requires:
 
@@ -106,17 +106,17 @@ CMakeFiles/cdn.dir/deploy.cpp.o.provides.build: CMakeFiles/cdn.dir/deploy.cpp.o
 
 
 CMakeFiles/cdn.dir/io.cpp.o: CMakeFiles/cdn.dir/flags.make
-CMakeFiles/cdn.dir/io.cpp.o: /home/sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cdn.dir/io.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cdn.dir/io.cpp.o -c /home/sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp
+CMakeFiles/cdn.dir/io.cpp.o: /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/Sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cdn.dir/io.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cdn.dir/io.cpp.o -c /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp
 
 CMakeFiles/cdn.dir/io.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cdn.dir/io.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp > CMakeFiles/cdn.dir/io.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp > CMakeFiles/cdn.dir/io.cpp.i
 
 CMakeFiles/cdn.dir/io.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cdn.dir/io.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp -o CMakeFiles/cdn.dir/io.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/Sean/Workspace/Huawei/SDK-gcc/cdn/io.cpp -o CMakeFiles/cdn.dir/io.cpp.s
 
 CMakeFiles/cdn.dir/io.cpp.o.requires:
 
@@ -138,16 +138,16 @@ cdn_OBJECTS = \
 # External object files for target cdn
 cdn_EXTERNAL_OBJECTS =
 
-/home/sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/cdn.cpp.o
-/home/sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/deploy.cpp.o
-/home/sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/io.cpp.o
-/home/sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/build.make
-/home/sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable /home/sean/Workspace/Huawei/SDK-gcc/bin/cdn"
+/Users/Sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/cdn.cpp.o
+/Users/Sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/deploy.cpp.o
+/Users/Sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/io.cpp.o
+/Users/Sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/build.make
+/Users/Sean/Workspace/Huawei/SDK-gcc/bin/cdn: CMakeFiles/cdn.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/Sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable /Users/Sean/Workspace/Huawei/SDK-gcc/bin/cdn"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cdn.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-CMakeFiles/cdn.dir/build: /home/sean/Workspace/Huawei/SDK-gcc/bin/cdn
+CMakeFiles/cdn.dir/build: /Users/Sean/Workspace/Huawei/SDK-gcc/bin/cdn
 
 .PHONY : CMakeFiles/cdn.dir/build
 
@@ -162,6 +162,6 @@ CMakeFiles/cdn.dir/clean:
 .PHONY : CMakeFiles/cdn.dir/clean
 
 CMakeFiles/cdn.dir/depend:
-	cd /home/sean/Workspace/Huawei/SDK-gcc/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/sean/Workspace/Huawei/SDK-gcc/cdn /home/sean/Workspace/Huawei/SDK-gcc/cdn /home/sean/Workspace/Huawei/SDK-gcc/build /home/sean/Workspace/Huawei/SDK-gcc/build /home/sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles/cdn.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/Sean/Workspace/Huawei/SDK-gcc/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/Sean/Workspace/Huawei/SDK-gcc/cdn /Users/Sean/Workspace/Huawei/SDK-gcc/cdn /Users/Sean/Workspace/Huawei/SDK-gcc/build /Users/Sean/Workspace/Huawei/SDK-gcc/build /Users/Sean/Workspace/Huawei/SDK-gcc/build/CMakeFiles/cdn.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/cdn.dir/depend
 
