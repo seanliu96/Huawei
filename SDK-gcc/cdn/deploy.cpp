@@ -488,7 +488,7 @@ void HGAPSO::OBMA(Particle & s) {
         }
     }
     */
-    for (int k = 0; k < 5; ++k) {
+    for (int k = 0; k < 3; ++k) {
         ++iter;
         int T_iter = 15 * ((iter >> 8) + 1);
         do {
@@ -513,7 +513,6 @@ void HGAPSO::OBMA(Particle & s) {
                 s.v_best = v;
                 s.cost_best = cost;
             }
-            break;
         }
         /*
         do {
@@ -580,7 +579,7 @@ void HGAPSO::PSO_update(Particle & s) {
 }
 
 void HGAPSO::run() {
-    int r1, r2, i, k = p.size(), j = k >> 2;
+    int i, k = p.size(), j = k >> 2;
     for (i = 0; i < j; ++i) {
         OBMA(p[i]);
     }
@@ -616,7 +615,6 @@ double HGAPSO::initial(int size) {
     gbest = p[0];
     decode(gbest.v_best, v);
     int best_size = v.size();
-    /*
     if (p_size < limit_size) {
         for (int i = p_size; i < max_p_size; ++i) {
             fuck->kmeans(best_size, v);
@@ -629,7 +627,7 @@ double HGAPSO::initial(int size) {
             addone(v);
         }
     }
-    */
+    /*
     if (p_size < max_p_size) {
         for (int i = p_size; i < max_p_size; ++i) {
             fuck->kmeans(best_size, v);
@@ -638,6 +636,7 @@ double HGAPSO::initial(int size) {
     } else {
         p.resize(max_p_size);
     }
+    */
     clock_t t1 = clock();
     run();
     clock_t t2 = clock();

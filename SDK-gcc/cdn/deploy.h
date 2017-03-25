@@ -10,7 +10,7 @@ const int MAX_V = 2010;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
 const double alpha = 0.995;
-const double c1 = 2.0, c2 = 2.0, w = 0.9;
+const double c1 = 1.6, c2 = 1.6, w = 0.9;
 
 struct EdgeInfo {
     int v, c;
