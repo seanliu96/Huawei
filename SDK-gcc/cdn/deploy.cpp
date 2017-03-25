@@ -19,7 +19,6 @@ using namespace std;
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
     char * topo_file;
-    srand(time(0));
     Fuck fuck;
     fuck.readtopo(topo, line_num);
     fuck.spfa();
