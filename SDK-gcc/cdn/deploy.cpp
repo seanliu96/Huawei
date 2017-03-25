@@ -52,6 +52,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int max_index = min(best_index + block_size, fuck.customer_num);
     int max_p_size = 128 / log(best_index << 3);
     max_p_size += (max_p_size & 1);
+    ++kmean_times;
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             fuck.kmeans(i, server);
@@ -365,6 +366,8 @@ HGAPSO::HGAPSO(Fuck & fk) {
     gbest = Particle(l);
     H.resize(l, 0);
     iter = 0;
+    cnt = 0;
+    fast = false;
 }
 
 void HGAPSO::decode(vector<double> & vd, vector<int> & vi) {
@@ -545,6 +548,7 @@ void HGAPSO::OBMA(Particle & s) {
         PSO_c1 = c1;
         PSO_c2 = c2;
         PSO_w = w;
+        cnt = 0;
     }
     //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
@@ -572,15 +576,18 @@ void HGAPSO::PSO_update(Particle & s) {
             PSO_c1 = c1;
             PSO_c2 = c2;
             PSO_w = w;
+            cnt = 0;
         }
     }
     //cout << "PSO:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 void HGAPSO::run() {
-    int i, k = p.size(), j = k >> 2;
-    for (i = 0; i < j; ++i) {
-        OBMA(p[i]);
+    int i = 0, k = p.size(), j = k >> 1;
+    if (!fast) {
+        for (; i < j; ++i) {
+            OBMA(p[i]);
+        }
     }
     for (; i < k; ++i)
         PSO_update(p[i]);
@@ -603,17 +610,24 @@ void HGAPSO::run() {
     PSO_c1 *= alpha;
     PSO_c2 *= alpha;
     PSO_w *= alpha;
+    ++cnt;
+    if(cnt > j) {
+        fast = !fast;
+        cnt = 1;
+    }
     //cout << gbest.cost_best << endl;
 }
 
 double HGAPSO::initial(int size) {
     max_p_size = size;
-    int p_size = p.size(), limit_size = max_p_size * 3 >> 2;
+    cnt = 0;
+    fast = max_p_size < 18;
+    int p_size = p.size(), limit_size = max_p_size >> 1;
     vector<int> v;
     sort(p.begin(), p.end(), cmp);
     gbest = p[0];
     decode(gbest.v_best, v);
-    int best_size = v.size();
+    int best_size = v.size() * 0.7;
     if (p_size < limit_size) {
         for (int i = p_size; i < max_p_size; ++i) {
             fuck->kmeans(best_size, v);
