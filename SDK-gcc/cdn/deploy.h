@@ -77,7 +77,7 @@ private:
     vector<Particle> p;
     vector<int> H;
     Particle gbest;
-    int l, iter, max_p_size;
+    int l, iter, max_p_size, cnt;
     double PSO_c1, PSO_c2, PSO_w;
     Fuck *fuck;
 };

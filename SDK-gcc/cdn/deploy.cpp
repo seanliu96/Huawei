@@ -365,6 +365,7 @@ HGAPSO::HGAPSO(Fuck & fk) {
     gbest = Particle(l);
     H.resize(l, 0);
     iter = 0;
+    cnt = 0;
 }
 
 void HGAPSO::decode(vector<double> & vd, vector<int> & vi) {
@@ -512,6 +513,7 @@ void HGAPSO::OBMA(Particle & s) {
                 s.v_best = v;
                 s.cost_best = cost;
             }
+            p.push_back(s);
         }
         /*
         do {
@@ -545,6 +547,7 @@ void HGAPSO::OBMA(Particle & s) {
         PSO_c1 = c1;
         PSO_c2 = c2;
         PSO_w = w;
+        cnt = 0;
     }
     //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
@@ -572,19 +575,21 @@ void HGAPSO::PSO_update(Particle & s) {
             PSO_c1 = c1;
             PSO_c2 = c2;
             PSO_w = w;
+            cnt = 0;
         }
     }
     //cout << "PSO:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 void HGAPSO::run() {
-    int i, k = p.size(), j = k >> 2;
+    int i, k = p.size(), j = min(cnt, k);
     for (i = 0; i < j; ++i) {
         OBMA(p[i]);
     }
     for (; i < k; ++i)
         PSO_update(p[i]);
     sort(p.begin(), p.end(), cmp);
+    p.resize(max_p_size);
     /*
     knuth_shuffle(p);
     for (i = k - 1; i >=1; i -= 2) {
@@ -603,11 +608,13 @@ void HGAPSO::run() {
     PSO_c1 *= alpha;
     PSO_c2 *= alpha;
     PSO_w *= alpha;
+    ++cnt;
     //cout << gbest.cost_best << endl;
 }
 
 double HGAPSO::initial(int size) {
     max_p_size = size;
+    cnt = 0;
     int p_size = p.size(), limit_size = max_p_size * 3 >> 2;
     vector<int> v;
     sort(p.begin(), p.end(), cmp);
