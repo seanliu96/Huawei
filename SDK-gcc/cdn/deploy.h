@@ -9,8 +9,7 @@ using namespace std;
 const int MAX_V = 2010;
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
-const double alpha = 0.995;
-const double c1 = 1.6, c2 = 1.6, w = 0.9;
+const double c1 = 1.0, c2 = 1.6, w = 0.9;
 
 struct EdgeInfo {
     int v, c;
@@ -55,8 +54,8 @@ class Particle {
 public:
     Particle(int length=0);
     Particle(int length, vector<int> & vi, Fuck* & fuck);
-    vector<double> v;
-    vector<double> v_best;
+    vector<int> v;
+    vector<int> v_best;
     vector<double> vp;
     long long cost_best;
     long long cost;
@@ -70,16 +69,15 @@ public:
     void run();
     double initial(int size);
 private:
-    void decode(vector<double> & vd, vector<int> & vi);
+    void decode(vector<int> & vd, vector<int> & vi);
     void cross(Particle & s1, Particle & s2);
     void OBMA(Particle & s);
     void PSO_update(Particle & s);
     vector<Particle> p;
     vector<int> H;
     Particle gbest;
-    int l, iter, max_p_size, cnt;
+    int l, iter, max_p_size;
     double PSO_c1, PSO_c2, PSO_w;
-    bool fast;
     Fuck *fuck;
 };
 

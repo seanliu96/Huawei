@@ -90,12 +90,12 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     delete []topo_file;
 }
 
-Particle::Particle(int length): v(length, 0.0), v_best(length, 0.0), vp(length, 0.0), cost_best(infll), cost(infll) {}
+Particle::Particle(int length): v(length, 0), v_best(length, 0), vp(length, 0.0), cost_best(infll), cost(infll) {}
 
-Particle::Particle(int length, vector<int> & vi, Fuck * & fuck): v(length, 0.0), v_best(length, 0.0), vp(length, 0.0), cost_best(infll), cost(infll) {
+Particle::Particle(int length, vector<int> & vi, Fuck * & fuck): v(length, 0), v_best(length, 0), vp(length, 0.0) {
     int size = vi.size();
     for (int i = 0; i < size; ++i) {
-        v_best[vi[i]] = v[vi[i]] = 1.0;
+        v_best[vi[i]] = v[vi[i]] = 1;
     }
     fuck->add_server(vi);
     cost = cost_best = fuck->costflow() + size * fuck->server_cost;
@@ -358,22 +358,14 @@ long long Fuck::costflow() {
 }
 
 HGAPSO::HGAPSO(Fuck & fk) {
-    PSO_c1 = c1;
-    PSO_c2 = c2;
-    PSO_w = w;
     fuck = &fk;
     l = fuck->node_num;
-    gbest = Particle(l);
-    H.resize(l, 0);
-    iter = 0;
-    cnt = 0;
-    fast = false;
 }
 
-void HGAPSO::decode(vector<double> & vd, vector<int> & vi) {
+void HGAPSO::decode(vector<int> & vd, vector<int> & vi) {
     vi.clear();
     for (int i = 0; i < l; ++i) {
-        if (vd[i] > 0.5)
+        if (vd[i])
             vi.push_back(i);
     }
 }
@@ -388,167 +380,53 @@ void HGAPSO::get_best(vector<int> & server) {
 
 void HGAPSO::cross(Particle & s1, Particle & s2) {
     //clock_t t1 = clock();
-    vector<double> v1(l, 0), v2(l, 0);
-    int m = 0, l_2 = l >> 1;
-    vector<int> node1, node2;
-    long long cost;
-    for (int i = 0; i < l; ++i) {
-        v1[i] = (s1.v[i] + s2.v[i]) * 0.5;
-        if (v1[i] > 0.5)
-            node1.push_back(i);
-        else
-            node2.push_back(i);
-    }
-    m = node1.size();
-    knuth_shuffle(node1);
-    knuth_shuffle(node2);
-    if (m < l_2) {
-        for (int i = 0; i < m; ++i)
-            v2[node2[i]] = 1 - v1[node2[i]];
-    } else if (m == l_2) {
-        for (int i = 0; i < l; ++i)
-            v2[i] = 1 - v1[i];
-    } else {
-        int j = node2.size();
-        for (int i = 0; i < j; ++i)
-            v2[node2[i]] = 1 - v1[node2[i]];
-        j = (m << 1) - j;
-        for (int i = 0; i < j; ++i)
-            v2[node1[i]] = v1[node1[i]];
-    }
-    decode(v1, node1);
-    fuck->add_server(node1);
-    cost = fuck->costflow() + node1.size() * fuck->server_cost;
-    if (cost < s1.cost) {
-        s1.cost = cost;
-        s1.v = v1;
-        if (cost < s1.cost_best) {
-            s1.cost_best = cost;
-            s1.v_best = v1;
-            if (cost < gbest.cost_best) {
-                gbest.cost_best = cost;
-                gbest.v_best = v1;
-                PSO_c1 = c1;
-                PSO_c2 = c2;
-                PSO_w = w;
-            }
-        }
-    }
-    decode(v2, node2);
-    fuck->add_server(node2);
-    cost = fuck->costflow() + node1.size() * fuck->server_cost;
-    if (cost < s2.cost) {
-        s2.cost = cost;
-        s2.v = v2;
-        if (cost < s2.cost_best) {
-            s2.cost_best = cost;
-            s2.v_best = v2;
-            if (cost < gbest.cost_best) {
-                gbest.cost_best = cost;
-                gbest.v_best = v2;
-                PSO_c1 = c1;
-                PSO_c2 = c2;
-                PSO_w = w;
-            }
-        }
-    }
+    swap(s1.v, s2.v);
     //cout << "cross:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
+
 void HGAPSO::OBMA(Particle & s) {
     //clock_t t1 = clock();
-    //vector<double> v(s.v), v_(l);
-    vector<double> v(s.v);
     vector<int> server, unserver;
     for (int i = 0; i < l; ++i) {
-        //v_[i] = 1 - v[i];
-        if (v[i] > 0.5) {
+        if (s.v[i]) {
             server.push_back(i);
         } else {
             unserver.push_back(i);
         }
     }
-    long long best_cost = s.cost, cost;
-    //int server_index, unserver_index, server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no, l_2 = l >> 1;
-    int server_index, unserver_index, server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no;
-    /*
+    int server_index = 0, unserver_index = 0, server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no;
     knuth_shuffle(server);
     knuth_shuffle(unserver);
-    if (server_size < l_2) {
-        for (int i = server_size; i < unserver_size; ++i)
-            v_[unserver[i]] = v[unserver[i]];
-    } else if (server_size > l_2) {
-        for (int i = unserver_size; i < server_size; ++i) {
-            v_[server[i]] = v[server[i]];
-        }
-    }
-    for (int i = 0; i < l; ++i) {
-        if (v_[i] > 0.5) {
-            server_.push_back(i);
-        } else {
-            unserver_.push_back(i);
-        }
-    }
-    */
-    for (int k = 0; k < 3; ++k) {
-        ++iter;
+    for (int k = 0; k < 5; ++k) {
         int T_iter = 15 * ((iter >> 8) + 1);
-        do {
-            server_index = rand() % server_size;
+        for (; server_index < server_size; ++server_index) {
             server_no = server[server_index];
-        } while (iter < H[server_no]);
+            if (H[server_no] < iter)
+                break;
+        }
         H[server_no] = T_iter;
-        do {
-            unserver_index = rand() % unserver_size;
+        for (; unserver_index < unserver_size; ++unserver_index) {
             unserver_no = unserver[unserver_index];
-        } while (iter < H[unserver_no]);
+            if (H[unserver_no] < iter)
+                break;
+        }
         H[unserver_no] = 0.7 * T_iter;
-        swap(v[server_no], v[unserver_no]);
+        swap(s.v[server_no], s.v[unserver_no]);
         swap(server[server_index], unserver[unserver_index]);
-        fuck->add_server(server);
-        cost = fuck->costflow() + server.size() * fuck->server_cost;
-        if (cost < best_cost) {
-            s.v = v;
-            s.cost = cost;
-            best_cost = cost;
-            if (cost < s.cost_best) {
-                s.v_best = v;
-                s.cost_best = cost;
-            }
-        }
-        /*
-        do {
-            server_index = rand() % server_size;
-            server_no = server_[server_index];
-        } while (iter < H[server_no]);
-        H[server_no] = T_iter;
-        do {
-            unserver_index = rand() % unserver_size;
-            unserver_no = unserver_[unserver_index];
-        } while (iter < H[unserver_no]);
-        H[unserver_no] = 0.7 * T_iter;
-        swap(v_[server_no], v_[unserver_no]);
-        swap(server_[server_index], unserver_[unserver_index]);
-        fuck->add_server(server_);
-        cost = fuck->costflow() + server.size() * fuck->server_cost;
-        if (cost < best_cost) {
-            s.v = v_;
-            s.cost = cost;
-            best_cost = cost;
-            if (cost < s.cost_best) {
-                s.v_best = v_;
-                s.cost_best = cost;
-            }
-        }
-        */
+        ++iter;
+        if (server_index == server_size || unserver_index == unserver_size)
+            break;
+    }
+    fuck->add_server(server);
+    s.cost = fuck->costflow() + server.size() * fuck->server_cost;
+    if (s.cost < s.cost_best) {
+        s.v_best = s.v;
+        s.cost_best = s.cost;
     }
     if (s.cost_best < gbest.cost_best) {
         gbest.v_best = s.v_best;
         gbest.cost_best = s.cost_best;
-        PSO_c1 = c1;
-        PSO_c2 = c2;
-        PSO_w = w;
-        cnt = 0;
     }
     //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
@@ -556,72 +434,42 @@ void HGAPSO::OBMA(Particle & s) {
 void HGAPSO::PSO_update(Particle & s) {
     //clock_t t1 = clock();
     vector<int> v;
-    long long cost;
     for (int i = 0; i < l; ++i) {
         s.vp[i] = PSO_w * s.vp[i] + PSO_c1 * rand() / RAND_MAX * (s.v_best[i] - s.v[i]) + PSO_c2 * rand() / RAND_MAX * (gbest.v_best[i] - s.v[i]); 
-        s.v[i] = s.v[i] + s.vp[i];
-        s.v[i] = max(0.0, s.v[i]);
-        s.v[i] = min(s.v[i], 1.0);
+        s.v[i] = 1 / (1 + exp(100 * (0.5 - (s.v[i] + s.vp[i])))) + 0.5;
     }
     decode(s.v, v);
     fuck->add_server(v);
-    cost = fuck->costflow() + v.size() * fuck->server_cost;
-    s.cost = cost;
-    if (cost < s.cost_best) {
+    s.cost = fuck->costflow() + v.size() * fuck->server_cost;
+    if (s.cost < s.cost_best) {
         s.v_best = s.v;
         s.cost_best = s.cost;
-        if (cost < gbest.cost_best) {
-            gbest.v_best = s.v;
-            gbest.cost_best = cost;
-            PSO_c1 = c1;
-            PSO_c2 = c2;
-            PSO_w = w;
-            cnt = 0;
+        if (s.cost_best < gbest.cost_best) {
+            gbest.v_best = s.v_best;
+            gbest.cost_best = s.cost_best;
         }
     }
     //cout << "PSO:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 void HGAPSO::run() {
-    int i = 0, k = p.size(), j = k >> 1;
-    if (!fast) {
-        for (; i < j; ++i) {
-            OBMA(p[i]);
-        }
+    int i;
+    for (i = 0; i < max_p_size; ++i) {
+        OBMA(p[i]);
     }
-    for (; i < k; ++i)
+    for (i = 0; i < max_p_size; ++i) {
         PSO_update(p[i]);
-    sort(p.begin(), p.end(), cmp);
-    /*
-    knuth_shuffle(p);
-    for (i = k - 1; i >=1; i -= 2) {
-        r1 = rand() % k;
-        do {
-            r2 = rand() % k;
-        } while (r1 == r2);
-        p[i-1] = cmp(p[r1], p[r2]) ? p[r1] : p[r2];
-        r1 = rand() % k;
-        do {
-            r2 = rand() % k;
-        } while (r1 == r2);
-        p[i] = cmp(p[r1], p[r2]) ? p[r1] : p[r2];
-        cross(p[i-1], p[i]);
-    }*/
-    PSO_c1 *= alpha;
-    PSO_c2 *= alpha;
-    PSO_w *= alpha;
-    ++cnt;
-    if(cnt > j) {
-        fast = !fast;
-        cnt = 1;
     }
     //cout << gbest.cost_best << endl;
 }
 
 double HGAPSO::initial(int size) {
     max_p_size = size;
-    cnt = 0;
-    fast = max_p_size < 18;
+    H.resize(l, 0);
+    iter = 1;
+    PSO_c1 = c1;
+    PSO_c2 = c2;
+    PSO_w = w;
     int p_size = p.size(), limit_size = max_p_size >> 1;
     vector<int> v;
     sort(p.begin(), p.end(), cmp);
@@ -640,16 +488,6 @@ double HGAPSO::initial(int size) {
             addone(v);
         }
     }
-    /*
-    if (p_size < max_p_size) {
-        for (int i = p_size; i < max_p_size; ++i) {
-            fuck->kmeans(best_size, v);
-            addone(v);
-        }
-    } else {
-        p.resize(max_p_size);
-    }
-    */
     clock_t t1 = clock();
     run();
     clock_t t2 = clock();
