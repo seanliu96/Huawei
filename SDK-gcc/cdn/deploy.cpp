@@ -398,7 +398,7 @@ void HGAPSO::OBMA(Particle & s) {
     int server_index = 0, unserver_index = 0, server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no;
     knuth_shuffle(server);
     knuth_shuffle(unserver);
-    for (int k = 0; k < 5; ++k) {
+    for (int i = 0; i < 3; ++i) {
         int T_iter = 15 * ((iter >> 8) + 1);
         for (; server_index < server_size; ++server_index) {
             server_no = server[server_index];
