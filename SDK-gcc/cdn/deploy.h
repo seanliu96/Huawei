@@ -43,7 +43,7 @@ private:
     vector<vector<EdgeInfo> > graph;
     vector<CustomerNodeInfo> customer_nodes;
     vector<vector<int> > d;
-    bool vis[MAX_V];
+    int vis[MAX_V];
     Edge epool[MAX_EDGE_NUM * 5], *e[MAX_V];
     int psz, s, t, psz_tmp;
     int flow, dist, D[MAX_V];
@@ -54,29 +54,31 @@ class Particle {
 public:
     Particle(int length=0);
     Particle(int length, vector<int> & vi, Fuck* & fuck);
-    vector<int> v;
-    vector<int> v_best;
+    vector<double> v;
+    vector<double> v_best;
     vector<double> vp;
     long long cost_best;
     long long cost;
 };
 
-class HGAPSO {
+class XJBS {
 public:
-    HGAPSO(Fuck & fuck);
+    XJBS(Fuck & fuck);
     void get_best(vector<int> & server);
     void addone(vector<int> & v);
-    void run();
+    void run1();
+    void run2();
     double initial(int size);
+    inline void reproduction();
 private:
-    void decode(vector<int> & vd, vector<int> & vi);
-    void cross(Particle & s1, Particle & s2);
+    void decode(vector<double> & vd, vector<int> & vi);
+    void GA_cross(Particle & s1, Particle & s2);
     void OBMA(Particle & s);
-    void PSO_update(Particle & s);
+    inline void PSO_update(Particle & s);
+    inline void updateone(Particle & s);
     vector<Particle> p;
-    vector<int> H;
     Particle gbest;
-    int l, iter, max_p_size;
+    int l, max_p_size, cnt;
     double PSO_c1, PSO_c2, PSO_w;
     Fuck *fuck;
 };

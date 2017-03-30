@@ -16,22 +16,23 @@
 
 using namespace std;
 
+double last_second = 90 - 1;
+double first_second;
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
     char * topo_file;
     Fuck fuck;
     fuck.readtopo(topo, line_num);
     fuck.spfa();
-    HGAPSO hgapso(fuck);
+    XJBS xjbs(fuck);
     vector<int> server, best_server;
     vector<vector<int> > node;
     vector<int> flow;
     int best_index = fuck.customer_num;
     int kmean_times = 2;
     int block_size = (int)(sqrt(fuck.customer_num) + 0.1);
-    double last_second = 90 - 1;
     fuck.kmeans(1, server);
-    hgapso.addone(server);
+    xjbs.addone(server);
     fuck.kmeans(best_index, best_server);
     long long best_cost = best_index * fuck.server_cost;
     for (int i = best_index - 1; i > 1; i -= block_size) {
@@ -46,23 +47,28 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             }
         }
     }
-    hgapso.addone(best_server);
+    xjbs.addone(best_server);
     block_size = (block_size >> 1);
     int min_index = max(best_index - block_size, 1);
     int max_index = min(best_index + block_size, fuck.customer_num);
-    int max_p_size = 128 / log(best_index << 3);
-    max_p_size += (max_p_size & 1);
-    ++kmean_times;
+    int max_p_size = 10;
+    //int max_p_size = 128 / log(best_index << 3);
+    //max_p_size &= 0xfffe;
+    //++kmean_times;
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             fuck.kmeans(i, server);
-            hgapso.addone(server);
+            xjbs.addone(server);
         }
     }
-    last_second -= hgapso.initial(max_p_size);
+    last_second -= xjbs.initial(max_p_size);
+    first_second = last_second * 0.3;
+    while ((double)clock() / CLOCKS_PER_SEC < first_second)
+        xjbs.run1();
+    xjbs.reproduction();
     while ((double)clock() / CLOCKS_PER_SEC < last_second)
-        hgapso.run();
-    hgapso.get_best(best_server);
+        xjbs.run2();
+    xjbs.get_best(best_server);
     fuck.add_server(best_server);
     fuck.costflow();
     fuck.print_flow(node, flow);
@@ -90,9 +96,9 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     delete []topo_file;
 }
 
-Particle::Particle(int length): v(length, 0), v_best(length, 0), vp(length, 0.0), cost_best(infll), cost(infll) {}
+Particle::Particle(int length): v(length, 0), v_best(length, 0), vp(length, 0), cost_best(infll), cost(infll) {}
 
-Particle::Particle(int length, vector<int> & vi, Fuck * & fuck): v(length, 0), v_best(length, 0), vp(length, 0.0) {
+Particle::Particle(int length, vector<int> & vi, Fuck * & fuck): v(length, 0), v_best(length, 0), vp(length, 0) {
     int size = vi.size();
     for (int i = 0; i < size; ++i) {
         v_best[vi[i]] = v[vi[i]] = 1;
@@ -152,12 +158,12 @@ void Fuck::spfa() {
         d[s][s] = 0;
         deque<int> q;
         memset(vis,0,sizeof(vis));
-        vis[s] = true;
+        vis[s] = 1;
         q.push_back(s);
         while (!q.empty()) {
             int u = q.front();
             q.pop_front();
-            vis[u] = false;
+            vis[u] = 0;
             for (unsigned int i = 0; i < graph[u].size(); ++i) {
                 int v = graph[u][i].v;
                 int dis =  d[s][u] + graph[u][i].c;
@@ -165,7 +171,7 @@ void Fuck::spfa() {
                 { 
                     d[s][v] = dis;
                     if (!vis[v]) {
-                        vis[v] = true;
+                        vis[v] = 1;
                         if (q.size () && d[s][v] < d[s][q[0]])
                             q.push_front(v);
                         else
@@ -179,18 +185,17 @@ void Fuck::spfa() {
 
 void Fuck::kmeans(int k, vector<int> & clusters) {
     clusters.resize(k);
-    int label[MAX_V];
-    memset(label, -1, sizeof(label));
+    memset(vis, -1, sizeof(vis));
     vector<vector<int> > kmean_node(k);
     int min_dist, min_index;
     knuth_shuffle(customer_nodes);
     for (int i = 0; i < k; ++i) {
         clusters[i] = customer_nodes[i].v;
     }
-    while (true) {
+    while (1) {
         for (int i = 0; i < k; ++i)
             kmean_node[i].clear();
-        bool update = false;
+        bool update = 0;
         for (int i = 0; i < customer_num; ++i) {
             min_dist = inf;
             min_index = 0;
@@ -200,11 +205,11 @@ void Fuck::kmeans(int k, vector<int> & clusters) {
                     min_index = j;
                 }
             }
-            if (label[i] != min_index) {
-                update = true;
-                label[i] = min_index;
+            if (vis[i] != min_index) {
+                update = 1;
+                vis[i] = min_index;
             }
-            kmean_node[label[i]].push_back(i);
+            kmean_node[vis[i]].push_back(i);
         }
         if (!update) 
             break;
@@ -255,18 +260,18 @@ void Fuck::add_edge(int u, int v, int w, int c) {
 void Fuck::print_flow(vector<vector<int> > & node, vector<int> &flow) {
     node.clear();
     flow.clear();
-    while (true) {
+    while (1) {
         vector<int> Tmp;
         int u = s;
         int S = inf;
         while (u != t) {
-            bool flag=false;
+            bool flag=0;
             for (Edge *i = e[u]; i; i = i->next) {
                 int v = i->t;
                 if (i->U > i->u) {
                     S = min(S, i->U - i->u);
                     u = v;
-                    flag = true;
+                    flag = 1;
                     break;
                 }
             }
@@ -294,7 +299,7 @@ int Fuck::aug(int u, int m) {
     if (u == t)
         return cost += (long long)dist * m, m;
     int d = m;
-    vis[u] = true;
+    vis[u] = 1;
     for (Edge *i = e[u]; i; i = i->next) {
         if (i->u && !i->c && !vis[i->t]) {
             int f = aug(i->t, min(d, i->u));
@@ -314,7 +319,7 @@ bool Fuck::modlabel() {
     memset(D, 0x3f , sizeof(D));
     q.push_back(s);
     D[s] = 0;
-    vis[s] = true;
+    vis[s] = 1;
     while (!q.empty ()) {
         int u = q.front ();
         q.pop_front ();
@@ -324,7 +329,7 @@ bool Fuck::modlabel() {
             if (i->u && dis < D[v]) {
                 D[v] = dis;
                 if (!vis[v]) {
-                    vis[v] = true;
+                    vis[v] = 1;
                     if (q.size () && D[v] < D[q[0]])
                         q.push_front(v);
                     else
@@ -332,7 +337,7 @@ bool Fuck::modlabel() {
                 }
             }
         }
-        vis[u] = false;
+        vis[u] = 0;
     }
     for (Edge *i = epool; i < epool + psz; ++i) {
         i->c -= D[i->t] - D[i->pair->t];
@@ -357,87 +362,87 @@ long long Fuck::costflow() {
     return cost;
 }
 
-HGAPSO::HGAPSO(Fuck & fk) {
+XJBS::XJBS(Fuck & fk) {
     fuck = &fk;
     l = fuck->node_num;
 }
 
-void HGAPSO::decode(vector<int> & vd, vector<int> & vi) {
+void XJBS::decode(vector<double> & vd, vector<int> & vi) {
     vi.clear();
     for (int i = 0; i < l; ++i) {
-        if (vd[i])
+        if (vd[i] > 0.5)
             vi.push_back(i);
     }
 }
 
-void HGAPSO::addone(vector<int> & v) {
+void XJBS::addone(vector<int> & v) {
     p.emplace_back(l, v, fuck);
 }
 
-void HGAPSO::get_best(vector<int> & server) {
+void XJBS::get_best(vector<int> & server) {
     decode(gbest.v_best, server);
 }
 
-void HGAPSO::cross(Particle & s1, Particle & s2) {
+void XJBS::GA_cross(Particle & s1, Particle & s2) {
     //clock_t t1 = clock();
-    swap(s1.v, s2.v);
-    //cout << "cross:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
+    int r1 = rand() % l, r2 = rand() % l;
+    if (r1 > r2)
+        swap(r1, r2);
+    while (r1 < r2) {
+        swap(s1.v[r1], s2.v[r1]);
+        ++r1;
+    }
+
+    //cout << "GA_cross:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 
-void HGAPSO::OBMA(Particle & s) {
+void XJBS::OBMA(Particle & s) {
     //clock_t t1 = clock();
+    int r1, r2;
+    do {
+        r1 = rand() % l;
+    } while (s.v[r1] > 0.5);
+    do {
+        r2 = rand() % l;
+    } while (s.v[r2] < 0.5);
+    swap(s.v[r1], s.v[r2]);
+    /*
     vector<int> server, unserver;
     for (int i = 0; i < l; ++i) {
-        if (s.v[i]) {
+        if (s.v[i] > 0.5) {
             server.push_back(i);
         } else {
             unserver.push_back(i);
         }
     }
-    int server_index = 0, unserver_index = 0, server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no;
+    int server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no;
     knuth_shuffle(server);
     knuth_shuffle(unserver);
-    for (int i = 0; i < 3; ++i) {
-        int T_iter = 15 * ((iter >> 8) + 1);
-        for (; server_index < server_size; ++server_index) {
-            server_no = server[server_index];
-            if (H[server_no] < iter)
-                break;
-        }
-        H[server_no] = T_iter;
-        for (; unserver_index < unserver_size; ++unserver_index) {
-            unserver_no = unserver[unserver_index];
-            if (H[unserver_no] < iter)
-                break;
-        }
-        H[unserver_no] = 0.7 * T_iter;
+    if (server_size && unserver_size) {
+        swap(s.v[server[0]], s.v[unserver[0]]);
+    }*/
+    /*
+    for (int i = 0, server_index = 0, unserver_index = 0; i < 1 && server_index < server_size && unserver_index < unserver_size; ++i, ++server_index, ++unserver_index) {
+        server_no = server[server_index];
+        unserver_no = unserver[unserver_index];
         swap(s.v[server_no], s.v[unserver_no]);
         swap(server[server_index], unserver[unserver_index]);
-        ++iter;
-        if (server_index == server_size || unserver_index == unserver_size)
-            break;
-    }
-    fuck->add_server(server);
-    s.cost = fuck->costflow() + server.size() * fuck->server_cost;
-    if (s.cost < s.cost_best) {
-        s.v_best = s.v;
-        s.cost_best = s.cost;
-    }
-    if (s.cost_best < gbest.cost_best) {
-        gbest.v_best = s.v_best;
-        gbest.cost_best = s.cost_best;
-    }
+    }*/
     //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
-void HGAPSO::PSO_update(Particle & s) {
+inline void XJBS::PSO_update(Particle & s) {
     //clock_t t1 = clock();
-    vector<int> v;
     for (int i = 0; i < l; ++i) {
         s.vp[i] = PSO_w * s.vp[i] + PSO_c1 * rand() / RAND_MAX * (s.v_best[i] - s.v[i]) + PSO_c2 * rand() / RAND_MAX * (gbest.v_best[i] - s.v[i]); 
-        s.v[i] = 1 / (1 + exp(100 * (0.5 - (s.v[i] + s.vp[i])))) + 0.5;
+        s.v[i] = (1 / (1 + exp(100*(0.5-(s.v[i] + s.vp[i])))));
     }
+    //cout << "PSO:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
+}
+
+inline void XJBS::updateone(Particle & s) {
+    vector<int> v;
     decode(s.v, v);
     fuck->add_server(v);
     s.cost = fuck->costflow() + v.size() * fuck->server_cost;
@@ -447,49 +452,70 @@ void HGAPSO::PSO_update(Particle & s) {
         if (s.cost_best < gbest.cost_best) {
             gbest.v_best = s.v_best;
             gbest.cost_best = s.cost_best;
+            cnt = 0;
         }
     }
-    //cout << "PSO:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
-void HGAPSO::run() {
-    int i;
-    for (i = 0; i < max_p_size; ++i) {
+inline void XJBS::reproduction() {
+    int k = p.size();
+    for (int i = 0; i < k; ++i)
+        p.push_back(p[i]);
+}
+
+void XJBS::run1() {
+    for (int i = 0; i < max_p_size; ++i) {
         OBMA(p[i]);
-    }
-    for (i = 0; i < max_p_size; ++i) {
+        updateone(p[i]);
         PSO_update(p[i]);
     }
-    //cout << gbest.cost_best << endl;
+    if (++cnt > 200) {
+        first_second *= 0.5;
+        last_second *= 0.5;
+        cnt = 0;
+    }
+    //cout << "run1 " << gbest.cost_best << endl;
 }
 
-double HGAPSO::initial(int size) {
+void XJBS::run2() {
+    int i = 0;
+    int j = max_p_size >> 1;
+    sort(p.begin(), p.end(), cmp);
+    for (; i < j; ++i)
+        OBMA(p[i]);
+    for (; i < max_p_size; ++i)
+        PSO_update(p[i]);
+    for (i = 0, j = max_p_size - 1; i < j; ++i, --j) {
+        GA_cross(p[i], p[j]);
+        updateone(p[i]);
+        updateone(p[j]);
+    }
+    if (++cnt > 200) {
+        first_second *= 0.5;
+        last_second *= 0.5;
+        cnt = 0;
+    }
+    //cout << "run2 " << gbest.cost_best << endl;
+}
+
+double XJBS::initial(int size) {
     max_p_size = size;
-    H.resize(l, 0);
-    iter = 1;
     PSO_c1 = c1;
     PSO_c2 = c2;
     PSO_w = w;
-    int p_size = p.size(), limit_size = max_p_size >> 1;
+    cnt = 0;
+    int limit_size = min(max_p_size >> 1, (int)p.size());
     vector<int> v;
     sort(p.begin(), p.end(), cmp);
     gbest = p[0];
     decode(gbest.v_best, v);
     int best_size = v.size() * 0.7;
-    if (p_size < limit_size) {
-        for (int i = p_size; i < max_p_size; ++i) {
-            fuck->kmeans(best_size, v);
-            addone(v);
-        }
-    } else {
-        p.resize(limit_size);
-        for (int i = limit_size; i < max_p_size; ++i) {
-            fuck->kmeans(best_size, v);
-            addone(v);
-        }
+    for (int i = limit_size; i < max_p_size; ++i) {
+        fuck->kmeans(best_size, v);
+        addone(v);
     }
     clock_t t1 = clock();
-    run();
+    run1();
     clock_t t2 = clock();
     return double(t2 - t1) / CLOCKS_PER_SEC;
 }
