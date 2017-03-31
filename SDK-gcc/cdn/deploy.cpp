@@ -62,7 +62,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
         }
     }
     last_second -= xjbs.initial(max_p_size);
-    first_second = last_second * 0.3;
+    first_second = last_second * 0.4;
     while ((double)clock() / CLOCKS_PER_SEC < first_second)
         xjbs.run1();
     xjbs.reproduction();
