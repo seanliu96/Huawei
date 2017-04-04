@@ -29,7 +29,7 @@ struct Edge {
 class Fuck {
 public:
     void add_server(vector<int> & v);
-    void add_edge(int u, int v, int w, int c);
+    inline void add_edge(int u, int v, int w, int c);
     long long costflow();
     void print_flow(vector<vector<int> > &node, vector<int> &flow);
     void readtopo(char * topo[MAX_EDGE_NUM], int line_num);
@@ -64,27 +64,28 @@ public:
 class XJBS {
 public:
     XJBS(Fuck & fuck);
-    void get_best(vector<int> & server);
-    void addone(vector<int> & v);
+    inline void get_best(vector<int> & server);
+    inline void addone(vector<int> & v);
     void run1();
     void run2();
-    double initial(int size);
+    void initial();
     inline void reproduction();
+    int max_p_size;
 private:
-    void decode(vector<double> & vd, vector<int> & vi);
-    void GA_cross(Particle & s1, Particle & s2);
-    void OBMA(Particle & s);
+    inline void decode(vector<double> & vd, vector<int> & vi);
+    inline void GA_cross(Particle & s1, Particle & s2);
+    inline void OBMA(Particle & s);
     inline void PSO_update(Particle & s);
     inline void updateone(Particle & s);
     vector<Particle> p;
     Particle gbest;
-    int l, max_p_size, cnt;
+    int l, cnt;
     double PSO_c1, PSO_c2, PSO_w;
     Fuck *fuck;
 };
 
 template <class T>
-void knuth_shuffle(vector<T> & v);
+inline void knuth_shuffle(vector<T> & v);
 
 bool cmp(const Particle & p1, const Particle & p2);
 

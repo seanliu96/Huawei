@@ -16,8 +16,7 @@
 
 using namespace std;
 
-double last_second = 90 - 1;
-double first_second;
+clock_t run_second, last_second = (90 - 1.2) * CLOCKS_PER_SEC;
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
     char * topo_file;
@@ -51,23 +50,21 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     block_size = (block_size >> 1);
     int min_index = max(best_index - block_size, 1);
     int max_index = min(best_index + block_size, fuck.customer_num);
-    int max_p_size = 10;
-    //int max_p_size = 128 / log(best_index << 3);
-    //max_p_size &= 0xfffe;
-    //++kmean_times;
     for (int i = min_index; i <= max_index; ++i) {
         for (int j = 0; j < kmean_times; ++j) {
             fuck.kmeans(i, server);
             xjbs.addone(server);
         }
     }
-    last_second -= xjbs.initial(max_p_size);
-    first_second = last_second * 0.4;
-    while ((double)clock() / CLOCKS_PER_SEC < first_second)
+    xjbs.initial();
+    run_second = last_second * 0.4;
+    while (clock() < run_second) {
         xjbs.run1();
-    xjbs.reproduction();
-    while ((double)clock() / CLOCKS_PER_SEC < last_second)
+    }
+    run_second += last_second * 0.6;
+    while (clock() < run_second) {
         xjbs.run2();
+    }
     xjbs.get_best(best_server);
     fuck.add_server(best_server);
     fuck.costflow();
@@ -111,7 +108,7 @@ bool cmp(const Particle & p1, const Particle & p2) {
 }
 
 template <class T>
-void knuth_shuffle(vector<T> & v) {
+inline void knuth_shuffle(vector<T> & v) {
     int i = v.size() - 1, j = 0;
     while (i >= 0) {
         j = rand() % (i + 1);
@@ -250,7 +247,7 @@ void Fuck::add_server(vector<int> & v) {
     }
 }
 
-void Fuck::add_edge(int u, int v, int w, int c) {
+inline void Fuck::add_edge(int u, int v, int w, int c) {
     Edge *e1 = epool + psz++, *e2 = epool + psz++;
     *e1 = (Edge){v, w, c, w, c, e[u], e2}, e[u] = e1;
     *e2 = (Edge){u, 0, -c, 0, -c, e[v], e1}, e[v] = e2;
@@ -367,7 +364,7 @@ XJBS::XJBS(Fuck & fk) {
     l = fuck->node_num;
 }
 
-void XJBS::decode(vector<double> & vd, vector<int> & vi) {
+inline void XJBS::decode(vector<double> & vd, vector<int> & vi) {
     vi.clear();
     for (int i = 0; i < l; ++i) {
         if (vd[i] > 0.5)
@@ -375,29 +372,28 @@ void XJBS::decode(vector<double> & vd, vector<int> & vi) {
     }
 }
 
-void XJBS::addone(vector<int> & v) {
+inline void XJBS::addone(vector<int> & v) {
     p.emplace_back(l, v, fuck);
 }
 
-void XJBS::get_best(vector<int> & server) {
+inline void XJBS::get_best(vector<int> & server) {
     decode(gbest.v_best, server);
 }
 
-void XJBS::GA_cross(Particle & s1, Particle & s2) {
+inline void XJBS::GA_cross(Particle & s1, Particle & s2) {
     //clock_t t1 = clock();
     int r1 = rand() % l, r2 = rand() % l;
-    if (r1 > r2)
+    if (r2 < r1)
         swap(r1, r2);
     while (r1 < r2) {
         swap(s1.v[r1], s2.v[r1]);
         ++r1;
     }
-
     //cout << "GA_cross:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 
-void XJBS::OBMA(Particle & s) {
+inline void XJBS::OBMA(Particle & s) {
     //clock_t t1 = clock();
     int r1, r2;
     do {
@@ -458,9 +454,9 @@ inline void XJBS::updateone(Particle & s) {
 }
 
 inline void XJBS::reproduction() {
-    int k = p.size();
-    for (int i = 0; i < k; ++i)
+    for (int i = 0; i < max_p_size; ++i)
         p.push_back(p[i]);
+    max_p_size >>= 1;
 }
 
 void XJBS::run1() {
@@ -470,8 +466,8 @@ void XJBS::run1() {
         PSO_update(p[i]);
     }
     if (++cnt > 200) {
-        first_second *= 0.5;
-        last_second *= 0.5;
+        reproduction();
+        run_second >>= 1;
         cnt = 0;
     }
     //cout << "run1 " << gbest.cost_best << endl;
@@ -479,43 +475,45 @@ void XJBS::run1() {
 
 void XJBS::run2() {
     int i = 0;
-    int j = max_p_size >> 1;
+    int j = max_p_size - 1;
     sort(p.begin(), p.end(), cmp);
-    for (; i < j; ++i)
+    for (; i < j; ++i, --j) {
         OBMA(p[i]);
-    for (; i < max_p_size; ++i)
-        PSO_update(p[i]);
-    for (i = 0, j = max_p_size - 1; i < j; ++i, --j) {
+        PSO_update(p[j]);
         GA_cross(p[i], p[j]);
         updateone(p[i]);
         updateone(p[j]);
     }
-    if (++cnt > 200) {
-        first_second *= 0.5;
-        last_second *= 0.5;
+    if (++cnt > 100) {
+        run_second >>= 1;
         cnt = 0;
     }
     //cout << "run2 " << gbest.cost_best << endl;
 }
 
-double XJBS::initial(int size) {
-    max_p_size = size;
+void XJBS::initial() {
     PSO_c1 = c1;
     PSO_c2 = c2;
     PSO_w = w;
     cnt = 0;
-    int limit_size = min(max_p_size >> 1, (int)p.size());
-    vector<int> v;
     sort(p.begin(), p.end(), cmp);
     gbest = p[0];
-    decode(gbest.v_best, v);
-    int best_size = v.size() * 0.7;
+    int best_size = 0;;
+    for (int i = 0; i < l; ++i)
+        best_size += gbest.v_best[i] > 0.5 ? 1 : 0;
+    //cout << best_size << endl;
+    if (best_size > 150)
+        max_p_size = 8;
+    else if (best_size > 100)
+        max_p_size = 16;
+    else 
+        max_p_size = 6;
+    best_size *= 0.7;
+    int limit_size = min(max_p_size >> 1, (int)p.size());
+    p.resize(limit_size);
+    vector<int> v;
     for (int i = limit_size; i < max_p_size; ++i) {
         fuck->kmeans(best_size, v);
         addone(v);
     }
-    clock_t t1 = clock();
-    run1();
-    clock_t t2 = clock();
-    return double(t2 - t1) / CLOCKS_PER_SEC;
 }
