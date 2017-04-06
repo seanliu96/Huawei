@@ -71,6 +71,7 @@ public:
     void initial();
     inline void reproduction();
     int max_p_size;
+    Particle gbest;
 private:
     inline void decode(vector<double> & vd, vector<int> & vi);
     inline void GA_cross(Particle & s1, Particle & s2);
@@ -78,7 +79,6 @@ private:
     inline void PSO_update(Particle & s);
     inline void updateone(Particle & s);
     vector<Particle> p;
-    Particle gbest;
     int l, cnt;
     double PSO_c1, PSO_c2, PSO_w;
     Fuck *fuck;

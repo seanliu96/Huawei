@@ -47,6 +47,8 @@ utility
 -
 cmath
 -
+fstream
+-
 
 /home/sean/Workspace/Huawei/SDK-gcc/cdn/deploy.h
 lib_io.h

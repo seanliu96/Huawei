@@ -13,10 +13,11 @@
 #include <ctime>
 #include <utility>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
-clock_t run_second, last_second = (90 - 1.2) * CLOCKS_PER_SEC;
+clock_t run_second, last_second = (90 - 1.1) * CLOCKS_PER_SEC;
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
     char * topo_file;
@@ -61,11 +62,18 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     while (clock() < run_second) {
         xjbs.run1();
     }
+    xjbs.reproduction();
     run_second += last_second * 0.6;
     while (clock() < run_second) {
         xjbs.run2();
     }
     xjbs.get_best(best_server);
+    fstream fout("test.txt", ios::out);
+    fout << xjbs.gbest.cost_best << " " << best_server.size() << endl;
+    fout << endl;
+    for (int i = 0; i < best_server.size(); ++i)
+        fout << best_server[i] << endl;
+    /*
     fuck.add_server(best_server);
     fuck.costflow();
     fuck.print_flow(node, flow);
@@ -91,6 +99,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     }
     write_result(topo_file, filename);
     delete []topo_file;
+    */
 }
 
 Particle::Particle(int length): v(length, 0), v_best(length, 0), vp(length, 0), cost_best(infll), cost(infll) {}
@@ -456,7 +465,7 @@ inline void XJBS::updateone(Particle & s) {
 inline void XJBS::reproduction() {
     for (int i = 0; i < max_p_size; ++i)
         p.push_back(p[i]);
-    max_p_size >>= 1;
+    max_p_size <<= 1;
 }
 
 void XJBS::run1() {
@@ -465,8 +474,7 @@ void XJBS::run1() {
         updateone(p[i]);
         PSO_update(p[i]);
     }
-    if (++cnt > 200) {
-        reproduction();
+    if (++cnt > 100) {
         run_second >>= 1;
         cnt = 0;
     }
@@ -485,7 +493,7 @@ void XJBS::run2() {
         updateone(p[j]);
     }
     if (++cnt > 100) {
-        run_second >>= 1;
+        run_second = 0;
         cnt = 0;
     }
     //cout << "run2 " << gbest.cost_best << endl;
@@ -501,13 +509,12 @@ void XJBS::initial() {
     int best_size = 0;;
     for (int i = 0; i < l; ++i)
         best_size += gbest.v_best[i] > 0.5 ? 1 : 0;
-    //cout << best_size << endl;
     if (best_size > 150)
-        max_p_size = 8;
+        max_p_size = 4;
     else if (best_size > 100)
-        max_p_size = 16;
+        max_p_size = 14;
     else 
-        max_p_size = 6;
+        max_p_size = 10;
     best_size *= 0.7;
     int limit_size = min(max_p_size >> 1, (int)p.size());
     p.resize(limit_size);
