@@ -13,7 +13,6 @@
 #include <ctime>
 #include <utility>
 #include <cmath>
-#include <fstream>
 
 using namespace std;
 
@@ -68,12 +67,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
         xjbs.run2();
     }
     xjbs.get_best(best_server);
-    fstream fout("test.txt", ios::out);
-    fout << xjbs.gbest.cost_best << " " << best_server.size() << endl;
-    fout << endl;
-    for (int i = 0; i < best_server.size(); ++i)
-        fout << best_server[i] << endl;
-    /*
     fuck.add_server(best_server);
     fuck.costflow();
     fuck.print_flow(node, flow);
@@ -99,7 +92,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     }
     write_result(topo_file, filename);
     delete []topo_file;
-    */
 }
 
 Particle::Particle(int length): v(length, 0), v_best(length, 0), vp(length, 0), cost_best(infll), cost(infll) {}
