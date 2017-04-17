@@ -4,15 +4,15 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/Sean/Workspace/Huawei/复赛/SDK-gcc/cdn/cdn.cpp" "/Users/Sean/Workspace/Huawei/复赛/SDK-gcc/build/CMakeFiles/cdn.dir/cdn.cpp.o"
-  "/Users/Sean/Workspace/Huawei/复赛/SDK-gcc/cdn/deploy.cpp" "/Users/Sean/Workspace/Huawei/复赛/SDK-gcc/build/CMakeFiles/cdn.dir/deploy.cpp.o"
-  "/Users/Sean/Workspace/Huawei/复赛/SDK-gcc/cdn/io.cpp" "/Users/Sean/Workspace/Huawei/复赛/SDK-gcc/build/CMakeFiles/cdn.dir/io.cpp.o"
+  "/home/sean/Workspace/Huawei/复赛/SDK-gcc/cdn/cdn.cpp" "/home/sean/Workspace/Huawei/复赛/SDK-gcc/build/CMakeFiles/cdn.dir/cdn.cpp.o"
+  "/home/sean/Workspace/Huawei/复赛/SDK-gcc/cdn/deploy.cpp" "/home/sean/Workspace/Huawei/复赛/SDK-gcc/build/CMakeFiles/cdn.dir/deploy.cpp.o"
+  "/home/sean/Workspace/Huawei/复赛/SDK-gcc/cdn/io.cpp" "/home/sean/Workspace/Huawei/复赛/SDK-gcc/build/CMakeFiles/cdn.dir/io.cpp.o"
   )
-set(CMAKE_CXX_COMPILER_ID "Clang")
+set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/Users/Sean/Workspace/Huawei/复赛/SDK-gcc/cdn/lib"
+  "/home/sean/Workspace/Huawei/复赛/SDK-gcc/cdn/lib"
   )
 
 # Targets to which this target links.
