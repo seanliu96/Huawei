@@ -35,8 +35,7 @@ int node_server_id[MAX_V];
 
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
-
-	fuck.readtopo(topo, line_num);
+    fuck.readtopo(topo, line_num);
     fuck.spfa();
     //XJBS xjbs(fuck);
     int best_index = fuck.customer_num;
@@ -94,24 +93,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 }
 
 
-inline void write_file(const bool cover, const char * const buff, const char * const filename)
-{
-    if (buff == NULL)
-        return;
-
-    const char *write_type = cover ? "w" : "a";//1:覆盖写文件，0:追加写文件
-    FILE *fp = fopen(filename, write_type);
-    if (fp == NULL)
-    {
-        printf("Fail to open file %s, %s.\n", filename, strerror(errno));
-        return;
-    }
-    printf("Open file %s OK.\n", filename);
-    fputs(buff, fp);
-    fputs("\n", fp);
-    fclose(fp);
-}
-
 template <class T>
 inline void knuth_shuffle(vector<T> & v) {
     int i = v.size() - 1, j = 0;
@@ -136,8 +117,7 @@ void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) {
     line += 2;
     Max_flow = 0;
     while (true) {
-        int len = strlen(topo[line]);
-        if (len == 1) break;
+        if (strcmp("\r\n", topo[line]) == 0) break;
         sscanf(topo[line], "%d %d %d", &u, &w, &c);
         Server.push_back(ServerType(w, c));
         Max_flow = max(Max_flow, w);
@@ -153,8 +133,7 @@ void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) {
     }
     ++line;
     while (true) {
-        int len = strlen(topo[line]);
-        if (len == 1) break;
+        if (strcmp("\r\n", topo[line]) == 0) break;
         sscanf(topo[line], "%d %d", &u, &c);
         node_cost[u] = c;
         ++line;
