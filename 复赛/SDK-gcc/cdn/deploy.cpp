@@ -43,6 +43,8 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int kmean_times = 2;
     int up = fuck.customer_num * 0.8;
     int down = fuck.customer_num * 0.2;
+    if (!up) up = 1;
+    if (!down) down = 1;
     int block_size = (up - down) / 60 + 1;
     //fuck.kmeans(1, server);
     //xjbs.addone(server);
