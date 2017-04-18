@@ -5,7 +5,7 @@
 
 using namespace std;
 //void deploy_server(char * graph[MAX_EDGE_NUM], int edge_num, char * filename);
-const int MAX_V = 10000;
+const int MAX_V = 10005;
 //const int  MAX_LINE_LEN = 55000;
 //const int MAX_EDGE_NUM = (2000 * 20);
 const int inf = 0x3f3f3f3f;

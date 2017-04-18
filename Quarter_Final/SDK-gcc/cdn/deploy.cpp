@@ -15,9 +15,8 @@
 #include <cmath>
 
 using namespace std;
-//你要完成的功能总入口
 
-clock_t run_second, last_second = (90 - 1.5) * CLOCKS_PER_SEC;
+clock_t run_second, last_second = (90 - 1.1) * CLOCKS_PER_SEC;
 
 Fuck fuck;
 
@@ -29,7 +28,7 @@ int node_cost[MAX_V];
 vector<vector<int> > node;
 vector<int> flow;
 
-FlowCost flow_cost[10005];
+FlowCost flow_cost[MAX_V];
 int node_server_id[MAX_V];
 
 
@@ -44,7 +43,8 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     int down = fuck.customer_num * 0.2;
     if (!up) up = 1;
     if (!down) down = 1;
-    int block_size = (up - down) / 60 + 1;
+    int block_size = sqrt(up - down) + 0.5;
+    //int block_size = (up - down) / 60 + 1;
     //fuck.kmeans(1, server);
     //xjbs.addone(server);
     fuck.kmeans(best_index, best_server);
@@ -63,6 +63,11 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
         }
     }
     xjbs.addone(best_server);
+    down = max(1, best_index - (block >> 1)), up = min(best_index + (block >> 1), fuck.customer_num);
+    for (int i = down; i <= up; ++i) {
+        fuck.kmeans(i, server);
+        xjbs.addone(server);
+    }
     xjbs.initial();
     run_second = last_second * 0.4;
     while (clock() < run_second) {
