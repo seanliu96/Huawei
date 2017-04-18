@@ -63,19 +63,23 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
         }
     }
     xjbs.addone(best_server);
-    down = max(1, best_index - (block >> 1)), up = min(best_index + (block >> 1), fuck.customer_num);
+    ++kmean_times;
+    down = max(1, best_index - (block_size >> 1)), up = min(best_index + (block_size >> 1), fuck.customer_num);
     for (int i = down; i <= up; ++i) {
-        fuck.kmeans(i, server);
-        xjbs.addone(server);
+        for (int j = 0; j < kmean_times; ++j) {
+            fuck.kmeans(i, server);
+            xjbs.addone(server);
+        }
     }
     xjbs.initial();
     run_second = last_second * 0.4;
     while (clock() < run_second) {
-        xjbs.run1();
+        xjbs.run2();
     }
     xjbs.reproduction();
     run_second += last_second * 0.6;
     while (clock() < run_second) {
+        xjbs.run1();
         xjbs.run2();
     }
     xjbs.get_best(best_server, best_cost);
@@ -449,27 +453,6 @@ inline void XJBS::OBMA(Particle & s) {
         r2 = rand() % l;
     } while (s.v[r2] < 0.5);
     swap(s.v[r1], s.v[r2]);
-    
-    vector<int> server, unserver;
-    for (int i = 0; i < l; ++i) {
-        if (s.v[i] > 0.5) {
-            server.push_back(i);
-        } else {
-            unserver.push_back(i);
-        }
-    }
-    int server_size = server.size(), unserver_size = unserver.size(), server_no, unserver_no;
-    knuth_shuffle(server);
-    knuth_shuffle(unserver);
-    if (server_size && unserver_size) {
-        swap(s.v[server[0]], s.v[unserver[0]]);
-    }
-    for (int i = 0, server_index = 0, unserver_index = 0; i < 1 && server_index < server_size && unserver_index < unserver_size; ++i, ++server_index, ++unserver_index) {
-        server_no = server[server_index];
-        unserver_no = unserver[unserver_index];
-        swap(s.v[server_no], s.v[unserver_no]);
-        swap(server[server_index], unserver[unserver_index]);
-    }
     //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
@@ -514,7 +497,12 @@ void XJBS::run1() {
         run_second >>= 1;
         cnt = 0;
     }
-    //cout << "run1 " << gbest.cost_best << endl;
+    /*
+    vector<int> v;
+    decode(gbest.v_best, v);
+    cout << v.size() << endl;
+    cout << "run1 " << gbest.cost_best << endl;
+    */
 }
 
 void XJBS::run2() {
@@ -532,7 +520,12 @@ void XJBS::run2() {
         run_second >>= 1;
         cnt = 0;
     }
-    //cout << "run2 " << gbest.cost_best << endl;
+    /*
+    vector<int> v;
+    decode(gbest.v_best, v);
+    cout << v.size() << endl;
+    cout << "run2 " << gbest.cost_best << endl;
+    */
 }
 
 void XJBS::initial() {
@@ -545,17 +538,17 @@ void XJBS::initial() {
     int best_size = 0;;
     for (int i = 0; i < l; ++i)
         best_size += gbest.v_best[i] > 0.5 ? 1 : 0;
-    if (best_size > 150)
+    if (max_p_size > 300)
+        max_p_size = 5;
+    else
         max_p_size = 8;
-    else if (best_size > 100)
-        max_p_size = 16;
-    else 
-        max_p_size = 20;
     best_size *= 0.7;
-    int limit_size = min(max_p_size >> 1, (int)p.size());
+    int limit_size = max_p_size >> 1;
+    //int limit_size = 1;
     p.resize(limit_size);
     vector<int> v;
     for (int i = limit_size; i < max_p_size; ++i) {
+        --best_size;
         fuck->kmeans(best_size, v);
         addone(v);
     }
