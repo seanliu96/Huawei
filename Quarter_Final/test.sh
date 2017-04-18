@@ -14,7 +14,7 @@ cp "$dir1/bin/cdn" "$dir2"
 cd "$dir2"
 
 g++ test.cpp -o test
-date +%m%d%H%M >> "$logfile"
+#date +%m%d%H%M >> "$logfile"
 for file in `ls *.txt`; do
 	file2=$(ls "$file" | sed -e 's/txt/out/')
     #echo "$file" ":" >> "$logfile"
