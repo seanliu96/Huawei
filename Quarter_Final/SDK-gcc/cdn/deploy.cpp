@@ -74,7 +74,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     xjbs.initial();
     run_second = last_second * 0.4;
     while (clock() < run_second) {
-        xjbs.run2();
+        xjbs.run1();
     }
     xjbs.reproduction();
     run_second += last_second * 0.6;
@@ -538,10 +538,7 @@ void XJBS::initial() {
     int best_size = 0;;
     for (int i = 0; i < l; ++i)
         best_size += gbest.v_best[i] > 0.5 ? 1 : 0;
-    if (max_p_size > 300)
-        max_p_size = 5;
-    else
-        max_p_size = 8;
+    max_p_size = 8;
     best_size *= 0.7;
     int limit_size = max_p_size >> 1;
     //int limit_size = 1;
