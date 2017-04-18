@@ -70,7 +70,7 @@ private:
     long long cost;
 };
 
-/*
+
 class Particle {
 public:
     Particle(int length=0);
@@ -106,7 +106,6 @@ private:
 };
 
 bool cmp(const Particle & p1, const Particle & p2);
-*/
 
 template <class T>
 inline void knuth_shuffle(vector<T> & v);

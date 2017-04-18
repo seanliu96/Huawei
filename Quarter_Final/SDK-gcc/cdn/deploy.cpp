@@ -37,7 +37,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
     fuck.readtopo(topo, line_num);
     fuck.spfa();
-    //XJBS xjbs(fuck);
+    XJBS xjbs(fuck);
     int best_index = fuck.customer_num;
     int kmean_times = 2;
     int up = fuck.customer_num * 0.8;
@@ -62,6 +62,19 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
             }
         }
     }
+    xjbs.addone(best_server);
+    xjbs.initial();
+    run_second = last_second * 0.4;
+    while (clock() < run_second) {
+        xjbs.run1();
+    }
+    xjbs.reproduction();
+    run_second += last_second * 0.6;
+    while (clock() < run_second) {
+        xjbs.run2();
+    }
+    xjbs.get_best(best_server, best_cost);
+
     fuck.add_server(best_server);
     fuck.costflow();
     fuck.print_flow(node, flow);
@@ -91,7 +104,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     delete []topo_file;
 
 }
-
 
 template <class T>
 inline void knuth_shuffle(vector<T> & v) {
@@ -372,7 +384,7 @@ long long Fuck::costflow() {
     return cost;
 }
 
-/*
+
 Particle::Particle(int length): v(length, 0), v_best(length, 0), vp(length, 0), cost_best(infll), cost(infll) {}
 
 Particle::Particle(int length, vector<int> & vi, Fuck * & fuck): v(length, 0), v_best(length, 0), vp(length, 0) {
@@ -381,7 +393,7 @@ Particle::Particle(int length, vector<int> & vi, Fuck * & fuck): v(length, 0), v
         v_best[vi[i]] = v[vi[i]] = 1;
     }
     fuck->add_server(vi);
-    cost = cost_best = fuck->costflow() + size * fuck->server_cost;
+    cost = cost_best = fuck->costflow();
 }
 bool cmp(const Particle & p1, const Particle & p2) {
     return p1.cost == p2.cost ? p1.cost_best < p2.cost_best : p1.cost < p2.cost;
@@ -453,7 +465,7 @@ inline void XJBS::OBMA(Particle & s) {
         swap(s.v[server_no], s.v[unserver_no]);
         swap(server[server_index], unserver[unserver_index]);
     }
-    cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
+    //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
 inline void XJBS::PSO_update(Particle & s) {
@@ -469,7 +481,7 @@ inline void XJBS::updateone(Particle & s) {
     vector<int> v;
     decode(s.v, v);
     fuck->add_server(v);
-    s.cost = fuck->costflow() + v.size() * fuck->server_cost;
+    s.cost = fuck->costflow();
     if (s.cost < s.cost_best) {
         s.v_best = s.v;
         s.cost_best = s.cost;
@@ -542,5 +554,5 @@ void XJBS::initial() {
         fuck->kmeans(best_size, v);
         addone(v);
     }
-}*/
+}
 

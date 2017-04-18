@@ -6,19 +6,19 @@
 
 #IncludeRegexTransform: 
 
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/cdn.cpp
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/cdn.cpp
 deploy.h
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.h
 lib_io.h
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib_io.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib_io.h
 lib_time.h
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib_time.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib_time.h
 stdio.h
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/stdio.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/stdio.h
 
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.cpp
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.cpp
 deploy.h
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.h
 stdio.h
 -
 deque
@@ -48,13 +48,13 @@ utility
 cmath
 -
 
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/deploy.h
 vector
 -
 lib_io.h
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib_io.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib_io.h
 
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/io.cpp
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/io.cpp
 stdio.h
 -
 stdlib.h
@@ -74,7 +74,7 @@ unistd.h
 signal.h
 -
 
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib/lib_io.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib/lib_io.h
 
-/home/sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib/lib_time.h
+/Users/Sean/Workspace/Huawei/Quarter_Final/SDK-gcc/cdn/lib/lib_time.h
 
