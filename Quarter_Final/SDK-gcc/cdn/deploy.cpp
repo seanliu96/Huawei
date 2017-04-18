@@ -17,7 +17,7 @@
 using namespace std;
 //你要完成的功能总入口
 
-clock_t run_second, last_second = (90 - 1.1) * CLOCKS_PER_SEC;
+clock_t run_second, last_second = (90 - 1.5) * CLOCKS_PER_SEC;
 
 Fuck fuck;
 
