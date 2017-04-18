@@ -1,3 +1,0 @@
-/home/sean/Workspace/Huawei/Rematch/SDK-gcc/build/CMakeFiles/rebuild_cache.dir
-/home/sean/Workspace/Huawei/Rematch/SDK-gcc/build/CMakeFiles/edit_cache.dir
-/home/sean/Workspace/Huawei/Rematch/SDK-gcc/build/CMakeFiles/cdn.dir

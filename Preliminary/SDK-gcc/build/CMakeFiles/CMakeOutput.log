@@ -28,30 +28,30 @@ The CXX compiler identification is AppleClang, found in "/Users/Sean/Workspace/H
 Determining if the C compiler works passed with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_f777e/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f777e.dir/build.make CMakeFiles/cmTC_f777e.dir/build
-Building C object CMakeFiles/cmTC_f777e.dir/testCCompiler.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc     -o CMakeFiles/cmTC_f777e.dir/testCCompiler.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_f777e
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f777e.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_f777e.dir/testCCompiler.c.o  -o cmTC_f777e  
+Run Build Command:"/usr/bin/make" "cmTC_d66cf/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_d66cf.dir/build.make CMakeFiles/cmTC_d66cf.dir/build
+Building C object CMakeFiles/cmTC_d66cf.dir/testCCompiler.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc     -o CMakeFiles/cmTC_d66cf.dir/testCCompiler.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_d66cf
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d66cf.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_d66cf.dir/testCCompiler.c.o  -o cmTC_d66cf  
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_84ea6/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_84ea6.dir/build.make CMakeFiles/cmTC_84ea6.dir/build
-Building C object CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc     -o CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCCompilerABI.c
-Linking C executable cmTC_84ea6
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_84ea6.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o  -o cmTC_84ea6   
+Run Build Command:"/usr/bin/make" "cmTC_73476/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_73476.dir/build.make CMakeFiles/cmTC_73476.dir/build
+Building C object CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc     -o CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_73476
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_73476.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o  -o cmTC_73476   
 Apple LLVM version 8.0.0 (clang-800.0.42.1)
 Target: x86_64-apple-darwin15.6.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
- "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_84ea6 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a
+ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_73476 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-274.2
 configured to support archs: armv6 armv7 armv7s arm64 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em (tvOS)
 Library search paths:
@@ -66,18 +66,18 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_84ea6/fast"]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_84ea6.dir/build.make CMakeFiles/cmTC_84ea6.dir/build]
-  ignore line: [Building C object CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc     -o CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCCompilerABI.c]
-  ignore line: [Linking C executable cmTC_84ea6]
-  ignore line: [/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_84ea6.dir/link.txt --verbose=1]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o  -o cmTC_84ea6   ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_73476/fast"]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_73476.dir/build.make CMakeFiles/cmTC_73476.dir/build]
+  ignore line: [Building C object CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc     -o CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o   -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTC_73476]
+  ignore line: [/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_73476.dir/link.txt --verbose=1]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o  -o cmTC_73476   ]
   ignore line: [Apple LLVM version 8.0.0 (clang-800.0.42.1)]
   ignore line: [Target: x86_64-apple-darwin15.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
-  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_84ea6 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_73476 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
     arg [/Library/Developer/CommandLineTools/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-dynamic] ==> ignore
@@ -86,11 +86,11 @@ Parsed C implicit link information from above output:
     arg [-macosx_version_min] ==> ignore
     arg [10.11.0] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_84ea6] ==> ignore
+    arg [cmTC_73476] ==> ignore
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_84ea6.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_73476.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lSystem] ==> lib [System]
     arg [/Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a] ==> lib [/Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
   Library search paths: [;/usr/lib;/usr/local/lib]
@@ -111,13 +111,13 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_3de24/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3de24.dir/build.make CMakeFiles/cmTC_3de24.dir/build
-Building C object CMakeFiles/cmTC_3de24.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc    -std=c11 -o CMakeFiles/cmTC_3de24.dir/feature_tests.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_3de24
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3de24.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_3de24.dir/feature_tests.c.o  -o cmTC_3de24  
+Run Build Command:"/usr/bin/make" "cmTC_64e95/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_64e95.dir/build.make CMakeFiles/cmTC_64e95.dir/build
+Building C object CMakeFiles/cmTC_64e95.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -std=c11 -o CMakeFiles/cmTC_64e95.dir/feature_tests.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_64e95
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_64e95.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_64e95.dir/feature_tests.c.o  -o cmTC_64e95  
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -129,13 +129,13 @@ Linking C executable cmTC_3de24
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_f88a3/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f88a3.dir/build.make CMakeFiles/cmTC_f88a3.dir/build
-Building C object CMakeFiles/cmTC_f88a3.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc    -std=c99 -o CMakeFiles/cmTC_f88a3.dir/feature_tests.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_f88a3
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f88a3.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_f88a3.dir/feature_tests.c.o  -o cmTC_f88a3  
+Run Build Command:"/usr/bin/make" "cmTC_e9d98/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e9d98.dir/build.make CMakeFiles/cmTC_e9d98.dir/build
+Building C object CMakeFiles/cmTC_e9d98.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -std=c99 -o CMakeFiles/cmTC_e9d98.dir/feature_tests.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_e9d98
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e9d98.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_e9d98.dir/feature_tests.c.o  -o cmTC_e9d98  
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -147,13 +147,13 @@ Linking C executable cmTC_f88a3
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_e4a2b/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e4a2b.dir/build.make CMakeFiles/cmTC_e4a2b.dir/build
-Building C object CMakeFiles/cmTC_e4a2b.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc    -std=c90 -o CMakeFiles/cmTC_e4a2b.dir/feature_tests.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_e4a2b
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e4a2b.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_e4a2b.dir/feature_tests.c.o  -o cmTC_e4a2b  
+Run Build Command:"/usr/bin/make" "cmTC_4c500/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_4c500.dir/build.make CMakeFiles/cmTC_4c500.dir/build
+Building C object CMakeFiles/cmTC_4c500.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -std=c90 -o CMakeFiles/cmTC_4c500.dir/feature_tests.c.o   -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_4c500
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4c500.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_4c500.dir/feature_tests.c.o  -o cmTC_4c500  
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -163,30 +163,30 @@ Linking C executable cmTC_e4a2b
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_28b30/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_28b30.dir/build.make CMakeFiles/cmTC_28b30.dir/build
-Building CXX object CMakeFiles/cmTC_28b30.dir/testCXXCompiler.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++      -o CMakeFiles/cmTC_28b30.dir/testCXXCompiler.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_28b30
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_28b30.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_28b30.dir/testCXXCompiler.cxx.o  -o cmTC_28b30  
+Run Build Command:"/usr/bin/make" "cmTC_cc567/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_cc567.dir/build.make CMakeFiles/cmTC_cc567.dir/build
+Building CXX object CMakeFiles/cmTC_cc567.dir/testCXXCompiler.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++      -o CMakeFiles/cmTC_cc567.dir/testCXXCompiler.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_cc567
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cc567.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_cc567.dir/testCXXCompiler.cxx.o  -o cmTC_cc567  
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_80d3b/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_80d3b.dir/build.make CMakeFiles/cmTC_80d3b.dir/build
-Building CXX object CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/c++      -o CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCXXCompilerABI.cpp
-Linking CXX executable cmTC_80d3b
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_80d3b.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_80d3b   
+Run Build Command:"/usr/bin/make" "cmTC_da709/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_da709.dir/build.make CMakeFiles/cmTC_da709.dir/build
+Building CXX object CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/c++      -o CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+Linking CXX executable cmTC_da709
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da709.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_da709   
 Apple LLVM version 8.0.0 (clang-800.0.42.1)
 Target: x86_64-apple-darwin15.6.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
- "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_80d3b -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a
+ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_da709 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-274.2
 configured to support archs: armv6 armv7 armv7s arm64 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em (tvOS)
 Library search paths:
@@ -201,18 +201,18 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_80d3b/fast"]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_80d3b.dir/build.make CMakeFiles/cmTC_80d3b.dir/build]
-  ignore line: [Building CXX object CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++      -o CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Linking CXX executable cmTC_80d3b]
-  ignore line: [/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_80d3b.dir/link.txt --verbose=1]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_80d3b   ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_da709/fast"]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_da709.dir/build.make CMakeFiles/cmTC_da709.dir/build]
+  ignore line: [Building CXX object CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++      -o CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Linking CXX executable cmTC_da709]
+  ignore line: [/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da709.dir/link.txt --verbose=1]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_da709   ]
   ignore line: [Apple LLVM version 8.0.0 (clang-800.0.42.1)]
   ignore line: [Target: x86_64-apple-darwin15.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
-  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_80d3b -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_da709 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
     arg [/Library/Developer/CommandLineTools/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-dynamic] ==> ignore
@@ -221,11 +221,11 @@ Parsed CXX implicit link information from above output:
     arg [-macosx_version_min] ==> ignore
     arg [10.11.0] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_80d3b] ==> ignore
+    arg [cmTC_da709] ==> ignore
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_80d3b.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_da709.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lc++] ==> lib [c++]
     arg [-lSystem] ==> lib [System]
     arg [/Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a] ==> lib [/Library/Developer/CommandLineTools/usr/bin/../lib/clang/8.0.0/lib/darwin/libclang_rt.osx.a]
@@ -247,13 +247,13 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_31230/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_31230.dir/build.make CMakeFiles/cmTC_31230.dir/build
-Building CXX object CMakeFiles/cmTC_31230.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++     -std=c++14 -o CMakeFiles/cmTC_31230.dir/feature_tests.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_31230
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_31230.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_31230.dir/feature_tests.cxx.o  -o cmTC_31230  
+Run Build Command:"/usr/bin/make" "cmTC_2571b/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_2571b.dir/build.make CMakeFiles/cmTC_2571b.dir/build
+Building CXX object CMakeFiles/cmTC_2571b.dir/feature_tests.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -std=c++14 -o CMakeFiles/cmTC_2571b.dir/feature_tests.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_2571b
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2571b.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_2571b.dir/feature_tests.cxx.o  -o cmTC_2571b  
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -318,13 +318,13 @@ Linking CXX executable cmTC_31230
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_f6297/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f6297.dir/build.make CMakeFiles/cmTC_f6297.dir/build
-Building CXX object CMakeFiles/cmTC_f6297.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++     -std=c++11 -o CMakeFiles/cmTC_f6297.dir/feature_tests.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_f6297
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f6297.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_f6297.dir/feature_tests.cxx.o  -o cmTC_f6297  
+Run Build Command:"/usr/bin/make" "cmTC_60ecf/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_60ecf.dir/build.make CMakeFiles/cmTC_60ecf.dir/build
+Building CXX object CMakeFiles/cmTC_60ecf.dir/feature_tests.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -std=c++11 -o CMakeFiles/cmTC_60ecf.dir/feature_tests.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_60ecf
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_60ecf.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_60ecf.dir/feature_tests.cxx.o  -o cmTC_60ecf  
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -389,13 +389,13 @@ Linking CXX executable cmTC_f6297
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_feb9b/fast"
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_feb9b.dir/build.make CMakeFiles/cmTC_feb9b.dir/build
-Building CXX object CMakeFiles/cmTC_feb9b.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++     -std=c++98 -o CMakeFiles/cmTC_feb9b.dir/feature_tests.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_feb9b
-/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_feb9b.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_feb9b.dir/feature_tests.cxx.o  -o cmTC_feb9b  
+Run Build Command:"/usr/bin/make" "cmTC_cea55/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_cea55.dir/build.make CMakeFiles/cmTC_cea55.dir/build
+Building CXX object CMakeFiles/cmTC_cea55.dir/feature_tests.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -std=c++98 -o CMakeFiles/cmTC_cea55.dir/feature_tests.cxx.o -c /Users/Sean/Workspace/Huawei/Preliminary/SDK-gcc/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_cea55
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cea55.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_cea55.dir/feature_tests.cxx.o  -o cmTC_cea55  
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
