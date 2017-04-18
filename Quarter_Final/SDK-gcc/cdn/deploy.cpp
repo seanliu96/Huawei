@@ -79,7 +79,6 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     xjbs.reproduction();
     run_second += last_second * 0.6;
     while (clock() < run_second) {
-        xjbs.run1();
         xjbs.run2();
     }
     xjbs.get_best(best_server, best_cost);
@@ -541,11 +540,9 @@ void XJBS::initial() {
     max_p_size = 8;
     best_size *= 0.7;
     int limit_size = max_p_size >> 1;
-    //int limit_size = 1;
     p.resize(limit_size);
     vector<int> v;
     for (int i = limit_size; i < max_p_size; ++i) {
-        --best_size;
         fuck->kmeans(best_size, v);
         addone(v);
     }
