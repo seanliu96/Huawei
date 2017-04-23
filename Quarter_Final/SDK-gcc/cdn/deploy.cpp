@@ -13,24 +13,28 @@
 #include <ctime>
 #include <utility>
 #include <cmath>
-
 using namespace std;
 
 clock_t run_second, last_second = (90 - 1.1) * CLOCKS_PER_SEC;
 
 Fuck fuck;
 
-vector<int> server, best_server;
+vector<int> server, best_server, now_server;
 
-vector<ServerType> Server;
+int add_node, del_node;
+long long now_cost, best_cost;
+int flag;
+
+vector<ServerType> Server;	
 
 int node_cost[MAX_V];
 vector<vector<int> > node;
 vector<int> flow;
+bool is_server[MAX_V];
 
-FlowCost flow_cost[MAX_V];
+FlowCost flow_cost[10005];
 int node_server_id[MAX_V];
-
+int node_customer_id[MAX_V];
 
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 {
@@ -38,53 +42,79 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     fuck.spfa();
     XJBS xjbs(fuck);
     int best_index = fuck.customer_num;
-    int kmean_times = 2;
-    int up = fuck.customer_num * 0.8;
-    int down = fuck.customer_num * 0.2;
-    if (!up) up = 1;
-    if (!down) down = 1;
-    int block_size = sqrt(up - down) + 0.5;
-    //int block_size = (up - down) / 60 + 1;
-    //fuck.kmeans(1, server);
-    //xjbs.addone(server);
     fuck.kmeans(best_index, best_server);
-    long long best_cost = fuck.costflow();
-    
-    for (int i = down; i <= up; i += block_size) {
-        for (int j = 0; j < kmean_times ; ++j) {
-            fuck.kmeans(i, server);
-            fuck.add_server(server);
+    fuck.add_server(best_server);
+    best_cost = fuck.costflow();
+
+    now_cost = best_cost;
+    now_server = best_server;
+   	flag = 1;
+    run_second = last_second * 0.7;
+    while (clock() < run_second) {
+    	server = now_server;
+    	if (flag > 0) {
+    		if (add_node == fuck.node_num) 
+			{
+				fuck.change();
+				continue;
+			}
+			server.push_back(add_node);
+			fuck.add_server(server);
             long long cost = fuck.costflow();
-            if (cost < best_cost) {
-                best_cost = cost;
-                best_index = i;
-                best_server.swap(server);
-            }
-        }
+			if (cost < now_cost) {
+				++flag;
+                now_cost = cost;
+                now_server = server;
+                fuck.update(add_node, del_node, now_server);
+				if (now_cost < best_cost) {
+					best_cost = now_cost;
+					best_server = now_server;
+				}
+			}
+			else fuck.change();
+    	}	
+		else {
+			//cout<<"3"<<endl;
+			if (del_node == fuck.node_num) 
+			{
+				fuck.change();
+				continue;
+			}
+			for (int i = 0; i < server.size(); ++i) 
+				if (server[i] == del_node) {
+					server.erase(server.begin() + i);
+				}
+			fuck.add_server(server);
+			//cout<<"4"<<endl;
+            long long cost = fuck.costflow();
+			//cout<<"5"<<endl;
+			if (cost < now_cost) {
+				--flag;
+                now_cost = cost;
+                now_server = server;
+                fuck.update(add_node, del_node, now_server);
+				if (now_cost < best_cost) {
+					best_cost = now_cost;
+					best_server = now_server;
+				}
+			}
+			else fuck.change();
+		}
+		//cout << best_cost << '!'<<flag << endl;
     }
+	
+    
     xjbs.addone(best_server);
-    ++kmean_times;
-    down = max(1, best_index - (block_size >> 1)), up = min(best_index + (block_size >> 1), fuck.customer_num);
-    for (int i = down; i <= up; ++i) {
-        for (int j = 0; j < kmean_times; ++j) {
-            fuck.kmeans(i, server);
-            xjbs.addone(server);
-        }
-    }
     xjbs.initial();
-    run_second = last_second * 0.4;
+    run_second = last_second;
     while (clock() < run_second) {
-        xjbs.run1();
+        xjbs.run();
     }
-    xjbs.reproduction();
-    run_second += last_second * 0.6;
-    while (clock() < run_second) {
-        xjbs.run2();
-    }
-    xjbs.get_best(best_server, best_cost);
+    
+    best_server = xjbs.get_best();
 
     fuck.add_server(best_server);
-    fuck.costflow();
+    cout << fuck.costflow() << endl;
     fuck.print_flow(node, flow);
     int node_size = node.size();
     char * topo_file = new char[node_size * MAX_V * 5];
@@ -95,24 +125,21 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     strcat(topo_file, line);
     for (int i = 0; i < node_size; ++i) {
         line[0] = '\0';
-        int node_size_1 = node[i].size() - 1;
-        for (int j = 0; j < node_size_1; ++j) {
+        for (int j = 0; j < node[i].size(); ++j) {
             sprintf(tmp, "%d ", node[i][j]);
             strcat(line, tmp);
         }
-        sprintf(tmp, "%d ", node[i][node_size_1] - fuck.node_num);
+        sprintf(tmp, "%d ", node_customer_id[node[i][node[i].size() - 1]]);
         strcat(line, tmp);
-        sprintf(tmp, "%d ", (int)flow[i]);
+        sprintf(tmp, "%d ", flow[i]);
         strcat(line, tmp);
-        sprintf(tmp, "%d\n", (int)node_server_id[node[i][0]]);
+        sprintf(tmp, "%d\n", node_server_id[node[i][0]]);
         strcat(line, tmp);
         strcat(topo_file, line);
     }
     write_result(topo_file, filename);
     delete []topo_file;
-
 }
-
 template <class T>
 inline void knuth_shuffle(vector<T> & v) {
     int i = v.size() - 1, j = 0;
@@ -123,12 +150,49 @@ inline void knuth_shuffle(vector<T> & v) {
     }
 }
 
+void Fuck::change() {
+	//cout<<"1"<<endl;
+	if (abs(flag) == 1) {
+		 do {
+		 	server = now_server;
+		 	for (int i = 0; i < 3; ++i) {
+				int k = rand() % (int)now_server.size(); 
+				int u = server[k];
+				server[k] = graph[u][rand() % (int)graph[u].size()].v;
+			}
+			sort(server.begin(), server.end());
+			server.erase(unique(server.begin(),server.end()),server.end());
+			fuck.add_server(server);
+			//cout<<now_cost<<'?';
+			//for (int  i = 0; i < server.size(); ++i) cout<<server[i]<<' ';
+	        long long cost = fuck.costflow();
+			//cout<<cost<<endl;
+	        if (cost < best_cost) {
+	            best_cost = cost;
+	            best_server = server;
+	        }
+	        //cout<<num<<endl;
+	    } while (cost > now_cost);
+	    now_server = server;
+	    now_cost = cost;
+        fuck.update(add_node, del_node, now_server);
+		flag = 2;
+	}
+	else if (flag > 0) {
+		flag = -1;
+	}
+	else {
+		flag = 1;
+	}
+	//cout<<"2"<<endl;
+}
+
 void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) { 
     int line = 0;
     int u, v, c, w;
     if (line < line_num)
         sscanf(topo[line], "%d %d %d", &node_num, &edge_num, &customer_num);
-    s = node_num + customer_num;
+    s = node_num;
     t = s + 1;
     psz = 0;
     memset(e, 0, sizeof(e));
@@ -136,29 +200,31 @@ void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) {
     d.resize(node_num, vector<int>(node_num, inf));
     line += 2;
     Max_flow = 0;
-    while (true) {
-        if (strcmp("\r\n", topo[line]) == 0) break;
-        sscanf(topo[line], "%d %d %d", &u, &w, &c);
-        Server.push_back(ServerType(w, c));
-        Max_flow = max(Max_flow, w);
-        ++line;
-    }
-    for (int i = 0; i <= Max_flow; ++i) {
-        flow_cost[i].cost = inf;
-        for (int j = 0; j < Server.size(); ++j) 
-        if (Server[j].flow >= i && Server[j].cost < flow_cost[i].cost) {
-            flow_cost[i].cost = Server[j].cost;
-            flow_cost[i].id = j;
-        }
-    }
-    ++line;
-    while (true) {
-        if (strcmp("\r\n", topo[line]) == 0) break;
-        sscanf(topo[line], "%d %d", &u, &c);
-        node_cost[u] = c;
-        ++line;
-    }
-    ++line;
+	while (true) {
+		int len = strlen(topo[line]);
+		if (len == 2) break;
+		sscanf(topo[line], "%d %d %d", &u, &w, &c);
+		Server.push_back(ServerType(w, c));
+		Max_flow = max(Max_flow, w);
+		++line;
+	}
+	for (int i = 0; i <= Max_flow; ++i) {
+		flow_cost[i].cost = inf;
+		for (int j = 0; j < Server.size(); ++j) 
+		if (Server[j].flow >= i && Server[j].cost < flow_cost[i].cost) {
+			flow_cost[i].cost = Server[j].cost;
+			flow_cost[i].id = j;
+		}
+	}
+	++line;
+	while (true) {
+		int len = strlen(topo[line]);
+		if (len == 2) break;
+		sscanf(topo[line], "%d %d", &u, &c);
+		node_cost[u] = c;
+		++line;
+	}
+	++line;
     for (int i = 0; i < edge_num; ++i, ++line) {
         sscanf(topo[line], "%d %d %d %d", &u, &v, &w, &c);
         graph[u].emplace_back(v, c);
@@ -170,9 +236,9 @@ void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) {
     need_flow = 0;
     for (int i = 0; i < customer_num; ++i, ++line) {
         sscanf(topo[line], "%d %d %d", &u, &v, &w);
+		node_customer_id[v] = u;
         customer_nodes.emplace_back(v, w);
-        add_edge(v, u + node_num, w, 0);
-        add_edge(u + node_num, t, w, 0);
+        add_edge(v, t, w, 0);
         need_flow += w;
     }
     psz_tmp = psz;
@@ -285,7 +351,7 @@ void Fuck::print_flow(vector<vector<int> > & node, vector<int> &flow) {
     node.clear();
     flow.clear();
     for (Edge *i = e[s]; i; i = i->next) {
-        node_server_id[i->t] = flow_cost[i->U - i->u].id;
+    	node_server_id[i->t] = flow_cost[i->U - i->u].id;
     }
     while (1) {
         vector<int> Tmp;
@@ -385,12 +451,44 @@ long long Fuck::costflow() {
         } while (tmpf);
     }
     for (Edge *i = e[s]; i; i = i->next) {
-        cost += node_cost[i->t] + flow_cost[i->U - i->u].cost;
+    	cost += node_cost[i->t] + flow_cost[i->U - i->u].cost;
     }
     if (flow != need_flow)
         cost = infll;
     return cost;
 }
+
+void Fuck::update(int& add_node, int& del_node, vector<int> & v) {
+	//cout<<"3"<<endl;
+	add_node = node_num;
+	del_node = node_num;
+	long long Max = 0, Min = infll;
+	memset(is_server, 0, sizeof(is_server));
+	for (int i = 0; i < v.size(); ++i) {
+		is_server[v[i]] = true;
+	}
+	for (int i = 0; i < node_num; ++i) {
+		long long tol_flow = 0;
+		for (Edge *j = e[i]; j; j = j->next) 
+			if (j -> U > j -> u) {
+				tol_flow += j->U - j->u;
+			}
+		if (is_server[i]) {
+			if (tol_flow < Min) {
+				Min = tol_flow;
+				del_node = i;
+			}
+		}
+		else {
+			if (tol_flow > Max) {
+				Max = tol_flow;
+				add_node = i;
+			}
+		}
+	}
+	//cout<<"4"<<endl;
+}
+
 
 
 Particle::Particle(int length): v(length, 0), v_best(length, 0), vp(length, 0), cost_best(infll), cost(infll) {}
@@ -412,11 +510,11 @@ XJBS::XJBS(Fuck & fk) {
     l = fuck->node_num;
 }
 
-inline void XJBS::decode(vector<double> & vd, vector<int> & vi) {
-    vi.clear();
+inline void XJBS::decode(vector<double> & v) {
+    server.clear();
     for (int i = 0; i < l; ++i) {
-        if (vd[i] > 0.5)
-            vi.push_back(i);
+        if (v[i] > 0.5)
+            server.push_back(i);
     }
 }
 
@@ -424,9 +522,9 @@ inline void XJBS::addone(vector<int> & v) {
     p.emplace_back(l, v, fuck);
 }
 
-inline void XJBS::get_best(vector<int> & server, long long & cost) {
-    decode(gbest.v_best, server);
-    cost = gbest.cost_best;
+inline vector<int> XJBS::get_best() {
+    decode(gbest.v_best);
+    return server;
 }
 
 inline void XJBS::GA_cross(Particle & s1, Particle & s2) {
@@ -447,11 +545,12 @@ inline void XJBS::OBMA(Particle & s) {
     int r1, r2;
     do {
         r1 = rand() % l;
-    } while (s.v[r1] > 0.5);
+    } while (s.v[r1] < 0.5);
     do {
         r2 = rand() % l;
-    } while (s.v[r2] < 0.5);
+    } while (s.v[r2] > 0.5 || fuck->d[r1][r2] > 20);
     swap(s.v[r1], s.v[r2]);
+    
     //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
@@ -465,9 +564,8 @@ inline void XJBS::PSO_update(Particle & s) {
 }
 
 inline void XJBS::updateone(Particle & s) {
-    vector<int> v;
-    decode(s.v, v);
-    fuck->add_server(v);
+    decode(s.v);
+    fuck->add_server(server);
     s.cost = fuck->costflow();
     if (s.cost < s.cost_best) {
         s.v_best = s.v;
@@ -475,76 +573,37 @@ inline void XJBS::updateone(Particle & s) {
         if (s.cost_best < gbest.cost_best) {
             gbest.v_best = s.v_best;
             gbest.cost_best = s.cost_best;
-            cnt = 0;
         }
     }
 }
 
-inline void XJBS::reproduction() {
-    for (int i = 0; i < max_p_size; ++i)
-        p.push_back(p[i]);
-    max_p_size >>= 1;
-}
-
-void XJBS::run1() {
-    for (int i = 0; i < max_p_size; ++i) {
-        OBMA(p[i]);
-        updateone(p[i]);
-        PSO_update(p[i]);
-    }
-    if (++cnt > 100) {
-        run_second >>= 1;
-        cnt = 0;
-    }
-    /*
-    vector<int> v;
-    decode(gbest.v_best, v);
-    cout << v.size() << endl;
-    cout << "run1 " << gbest.cost_best << endl;
-    */
-}
-
-void XJBS::run2() {
+void XJBS::run() {
     int i = 0;
     int j = max_p_size - 1;
     sort(p.begin(), p.end(), cmp);
     for (; i < j; ++i, --j) {
         OBMA(p[i]);
         PSO_update(p[j]);
+        //OBMA(p[j]);
         GA_cross(p[i], p[j]);
         updateone(p[i]);
         updateone(p[j]);
     }
-    if (++cnt > 100) {
-        run_second >>= 1;
-        cnt = 0;
-    }
-    /*
-    vector<int> v;
-    decode(gbest.v_best, v);
-    cout << v.size() << endl;
-    cout << "run2 " << gbest.cost_best << endl;
-    */
+    //cout << "run " << gbest.cost_best << endl;
 }
 
 void XJBS::initial() {
     PSO_c1 = c1;
     PSO_c2 = c2;
     PSO_w = w;
-    cnt = 0;
-    sort(p.begin(), p.end(), cmp);
     gbest = p[0];
-    int best_size = 0;;
-    for (int i = 0; i < l; ++i)
-        best_size += gbest.v_best[i] > 0.5 ? 1 : 0;
-    max_p_size = 8;
-    best_size *= 0.7;
-    int limit_size = max_p_size >> 1;
-    p.resize(limit_size);
-    vector<int> v;
-    for (int i = limit_size; i < max_p_size; ++i) {
-        fuck->kmeans(best_size, v);
-        addone(v);
+    max_p_size = 6;
+    for (int i = 1; i < max_p_size; ++i) {
+        p.push_back(p[0]);
     }
 }
+
+
+
+
 

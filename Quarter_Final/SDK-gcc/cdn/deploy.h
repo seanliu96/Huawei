@@ -1,13 +1,10 @@
-#ifndef __ROUTE_H__
-#define __ROUTE_H__
 #include <vector>
-#include "lib_io.h"
 
 using namespace std;
-//void deploy_server(char * graph[MAX_EDGE_NUM], int edge_num, char * filename);
-const int MAX_V = 10005;
-//const int  MAX_LINE_LEN = 55000;
-//const int MAX_EDGE_NUM = (2000 * 20);
+
+const int MAX_V = 1500;
+const int MAX_LINE_LEN = 55000;
+const int MAX_EDGE_NUM = (2000 * 20);
 const int inf = 0x3f3f3f3f;
 const long long infll = 0x3f3f3f3f3f3f3f3f;
 const double c1 = 1.0, c2 = 1.6, w = 0.9;
@@ -55,14 +52,16 @@ public:
     void readtopo(char * topo[MAX_EDGE_NUM], int line_num);
     void spfa();
     void kmeans(int k, vector<int> & clusters);
+    void update(int& add_node, int& del_node, vector<int> & v);
+    void change();
     int need_flow, node_num, edge_num, customer_num;
+    vector<vector<EdgeInfo> > graph;
     long long server_cost;
+    vector<vector<int> > d;
 private:
     int aug(int u, int m);
     bool modlabel();
-    vector<vector<EdgeInfo> > graph;
     vector<CustomerNodeInfo> customer_nodes;
-    vector<vector<int> > d;
     int vis[MAX_V * 2];
     Edge epool[MAX_EDGE_NUM * 5], *e[MAX_V + 5];
     int psz, s, t, psz_tmp, Max_flow;
@@ -85,21 +84,20 @@ public:
 class XJBS {
 public:
     XJBS(Fuck & fuck);
-    inline void get_best(vector<int> & server, long long & cost);
+    inline vector<int> get_best();
     inline void addone(vector<int> & v);
-    void run1();
-    void run2();
+    void run();
     void initial();
-    inline void reproduction();
     int max_p_size;
 private:
-    inline void decode(vector<double> & vd, vector<int> & vi);
+    inline void decode(vector<double> & v);
     inline void GA_cross(Particle & s1, Particle & s2);
     inline void OBMA(Particle & s);
     inline void PSO_update(Particle & s);
     inline void updateone(Particle & s);
     vector<Particle> p;
-    int l, cnt;
+    vector<int> server;
+    int l;
     Particle gbest;
     double PSO_c1, PSO_c2, PSO_w;
     Fuck *fuck;
@@ -112,6 +110,3 @@ inline void knuth_shuffle(vector<T> & v);
 
 void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename);
 
-	
-
-#endif
