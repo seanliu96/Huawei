@@ -15,7 +15,7 @@
 #include <cmath>
 using namespace std;
 
-clock_t run_second, last_second = (90 - 1.3) * CLOCKS_PER_SEC;
+clock_t run_second, last_second = (90 - 1.1) * CLOCKS_PER_SEC;
 
 Fuck fuck;
 
@@ -56,7 +56,7 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
     		if (add_node == fuck.node_num) 
 			{
 				fuck.change();
-				continue;
+                continue;
 			}
 			server.push_back(add_node);
 			fuck.add_server(server);
@@ -71,14 +71,15 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 					best_server = now_server;
 				}
 			}
-			else fuck.change();
+			else {
+				fuck.change();
+            }
     	}	
 		else {
 			//cout<<"3"<<endl;
 			if (del_node == fuck.node_num) 
 			{
-				fuck.change();
-				continue;
+                fuck.change();
 			}
 			for (int i = 0; i < server.size(); ++i) 
 				if (server[i] == del_node) {
@@ -98,23 +99,25 @@ void deploy_server(char * topo[MAX_EDGE_NUM], int line_num,char * filename)
 					best_server = now_server;
 				}
 			}
-			else fuck.change();
-		}
-		//cout << best_cost << '!'<<flag << endl;
+            else {
+                fuck.change();
+            }
+        }
+        //cout << best_cost << '!'<<flag << endl;
     }
-	
-    
+
+
     xjbs.addone(best_server);
     xjbs.initial();
     run_second = last_second;
     while (clock() < run_second) {
         xjbs.run();
     }
-    
+
     best_server = xjbs.get_best();
 
     fuck.add_server(best_server);
-    cout << fuck.costflow() << endl;
+    //cout << fuck.costflow() << endl;
     fuck.print_flow(node, flow);
     int node_size = node.size();
     char * topo_file = new char[node_size * MAX_V * 5];
@@ -151,40 +154,49 @@ inline void knuth_shuffle(vector<T> & v) {
 }
 
 void Fuck::change() {
-	//cout<<"1"<<endl;
-	if (abs(flag) == 1) {
-		 do {
-		 	server = now_server;
-		 	for (int i = 0; i < 3; ++i) {
-				int k = rand() % (int)now_server.size(); 
-				int u = server[k];
-				server[k] = graph[u][rand() % (int)graph[u].size()].v;
-			}
-			sort(server.begin(), server.end());
-			server.erase(unique(server.begin(),server.end()),server.end());
-			fuck.add_server(server);
-			//cout<<now_cost<<'?';
-			//for (int  i = 0; i < server.size(); ++i) cout<<server[i]<<' ';
-	        long long cost = fuck.costflow();
-			//cout<<cost<<endl;
-	        if (cost < best_cost) {
-	            best_cost = cost;
-	            best_server = server;
-	        }
-	        //cout<<num<<endl;
-	    } while (cost > now_cost);
-	    now_server = server;
-	    now_cost = cost;
+    //cout<<"1"<<endl;
+    if (abs(flag) == 1) {
+        int i = 0;
+        for (; i < 50; ++i) {
+            server = now_server;
+            for (int i = 0; i < 3; ++i) {
+                int k = rand() % (int)now_server.size(); 
+                int u = server[k];
+                int v;
+                do {
+                    v = rand() % fuck.node_num; 
+                } while (fuck.d[v][u] > 20);
+                server[k] = v;
+            }
+            sort(server.begin(), server.end());
+            server.erase(unique(server.begin(),server.end()),server.end());
+            fuck.add_server(server);
+            //cout<<now_cost<<'?';
+            //for (int  i = 0; i < server.size(); ++i) cout<<server[i]<<' ';
+            long long cost = fuck.costflow();
+            //cout<<cost<<endl;
+            if (cost < best_cost) {
+                best_cost = cost;
+                best_server = server;
+            }
+            //cout<<num<<endl;
+            if (cost < now_cost)
+                break;
+        }
+        if (i == 50)
+            run_second = 0;
+        now_server = server;
+        now_cost = cost;
         fuck.update(add_node, del_node, now_server);
-		flag = 2;
-	}
-	else if (flag > 0) {
-		flag = -1;
-	}
-	else {
-		flag = 1;
-	}
-	//cout<<"2"<<endl;
+        flag = 2;
+    }
+    else if (flag > 0) {
+        flag = -1;
+    }
+    else {
+        flag = 1;
+    }
+    //cout<<"2"<<endl;
 }
 
 void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) { 
@@ -200,31 +212,31 @@ void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) {
     d.resize(node_num, vector<int>(node_num, inf));
     line += 2;
     Max_flow = 0;
-	while (true) {
-		int len = strlen(topo[line]);
-		if (len == 2) break;
-		sscanf(topo[line], "%d %d %d", &u, &w, &c);
-		Server.push_back(ServerType(w, c));
-		Max_flow = max(Max_flow, w);
-		++line;
-	}
-	for (int i = 0; i <= Max_flow; ++i) {
-		flow_cost[i].cost = inf;
-		for (int j = 0; j < Server.size(); ++j) 
-		if (Server[j].flow >= i && Server[j].cost < flow_cost[i].cost) {
-			flow_cost[i].cost = Server[j].cost;
-			flow_cost[i].id = j;
-		}
-	}
-	++line;
-	while (true) {
-		int len = strlen(topo[line]);
-		if (len == 2) break;
-		sscanf(topo[line], "%d %d", &u, &c);
-		node_cost[u] = c;
-		++line;
-	}
-	++line;
+    while (true) {
+        int len = strlen(topo[line]);
+        if (len == 2) break;
+        sscanf(topo[line], "%d %d %d", &u, &w, &c);
+        Server.push_back(ServerType(w, c));
+        Max_flow = max(Max_flow, w);
+        ++line;
+    }
+    for (int i = 0; i <= Max_flow; ++i) {
+        flow_cost[i].cost = inf;
+        for (int j = 0; j < Server.size(); ++j) 
+            if (Server[j].flow >= i && Server[j].cost < flow_cost[i].cost) {
+                flow_cost[i].cost = Server[j].cost;
+                flow_cost[i].id = j;
+            }
+    }
+    ++line;
+    while (true) {
+        int len = strlen(topo[line]);
+        if (len == 2) break;
+        sscanf(topo[line], "%d %d", &u, &c);
+        node_cost[u] = c;
+        ++line;
+    }
+    ++line;
     for (int i = 0; i < edge_num; ++i, ++line) {
         sscanf(topo[line], "%d %d %d %d", &u, &v, &w, &c);
         graph[u].emplace_back(v, c);
@@ -236,7 +248,7 @@ void Fuck::readtopo(char * topo[MAX_EDGE_NUM], int line_num) {
     need_flow = 0;
     for (int i = 0; i < customer_num; ++i, ++line) {
         sscanf(topo[line], "%d %d %d", &u, &v, &w);
-		node_customer_id[v] = u;
+        node_customer_id[v] = u;
         customer_nodes.emplace_back(v, w);
         add_edge(v, t, w, 0);
         need_flow += w;
@@ -351,7 +363,7 @@ void Fuck::print_flow(vector<vector<int> > & node, vector<int> &flow) {
     node.clear();
     flow.clear();
     for (Edge *i = e[s]; i; i = i->next) {
-    	node_server_id[i->t] = flow_cost[i->U - i->u].id;
+        node_server_id[i->t] = flow_cost[i->U - i->u].id;
     }
     while (1) {
         vector<int> Tmp;
@@ -451,7 +463,7 @@ long long Fuck::costflow() {
         } while (tmpf);
     }
     for (Edge *i = e[s]; i; i = i->next) {
-    	cost += node_cost[i->t] + flow_cost[i->U - i->u].cost;
+        cost += node_cost[i->t] + flow_cost[i->U - i->u].cost;
     }
     if (flow != need_flow)
         cost = infll;
@@ -459,34 +471,34 @@ long long Fuck::costflow() {
 }
 
 void Fuck::update(int& add_node, int& del_node, vector<int> & v) {
-	//cout<<"3"<<endl;
-	add_node = node_num;
-	del_node = node_num;
-	long long Max = 0, Min = infll;
-	memset(is_server, 0, sizeof(is_server));
-	for (int i = 0; i < v.size(); ++i) {
-		is_server[v[i]] = true;
-	}
-	for (int i = 0; i < node_num; ++i) {
-		long long tol_flow = 0;
-		for (Edge *j = e[i]; j; j = j->next) 
-			if (j -> U > j -> u) {
-				tol_flow += j->U - j->u;
-			}
-		if (is_server[i]) {
-			if (tol_flow < Min) {
-				Min = tol_flow;
-				del_node = i;
-			}
-		}
-		else {
-			if (tol_flow > Max) {
-				Max = tol_flow;
-				add_node = i;
-			}
-		}
-	}
-	//cout<<"4"<<endl;
+    //cout<<"3"<<endl;
+    add_node = node_num;
+    del_node = node_num;
+    long long Max = 0, Min = infll;
+    memset(is_server, 0, sizeof(is_server));
+    for (int i = 0; i < v.size(); ++i) {
+        is_server[v[i]] = true;
+    }
+    for (int i = 0; i < node_num; ++i) {
+        long long tol_flow = 0;
+        for (Edge *j = e[i]; j; j = j->next) 
+            if (j -> U > j -> u) {
+                tol_flow += j->U - j->u;
+            }
+        if (is_server[i]) {
+            if (tol_flow < Min) {
+                Min = tol_flow;
+                del_node = i;
+            }
+        }
+        else {
+            if (tol_flow > Max) {
+                Max = tol_flow;
+                add_node = i;
+            }
+        }
+    }
+    //cout<<"4"<<endl;
 }
 
 
@@ -550,7 +562,7 @@ inline void XJBS::OBMA(Particle & s) {
         r2 = rand() % l;
     } while (s.v[r2] > 0.5 || fuck->d[r1][r2] > 20);
     swap(s.v[r1], s.v[r2]);
-    
+
     //cout << "OBMA:" << (double)(clock()- t1) / CLOCKS_PER_SEC << endl;
 }
 
