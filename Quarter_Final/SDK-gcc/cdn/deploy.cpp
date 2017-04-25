@@ -15,7 +15,7 @@
 #include <cmath>
 using namespace std;
 
-clock_t run_second, last_second = (90 - 1.1) * CLOCKS_PER_SEC;
+clock_t run_second, last_second = (90 - 1.3) * CLOCKS_PER_SEC;
 
 Fuck fuck;
 
